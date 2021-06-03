@@ -7,7 +7,7 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 
 
 install_airflow:
-	pip install apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL}
+	pip install apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL} -m .
 	pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
 	pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"
 	pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
