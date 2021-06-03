@@ -7,12 +7,11 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 
 
 install_airflow:
-	pip install apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL} -m .
-	pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
+	pip install apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL}
 	pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"
-	pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
-	#pip install "apache-airflow[amazon,microsoft]==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
-	pip install smart-open==5.0.0 --constraint "${CONSTRAINT_URL}"
+	# the 2 below are for any db-related operations
+	#pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
+	#pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
 
 init_airflow_db:
 	$(info [+] Initialize the airflow db)

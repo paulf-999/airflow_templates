@@ -5,7 +5,6 @@ import logging
 import pymssql
 from airflow import DAG
 from datetime import datetime
-from airflow.operators.mssql_operator import MsSqlOperator
 from airflow.operators.python_operator import PythonOperator
 
 default_args = {
