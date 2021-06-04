@@ -6,7 +6,8 @@ To create a local install of Airflow containing the prerquisite files, run `make
 
 # Todo:
 
-* Investigate variable usage
+* change slack dag, to read var
+* dbt eg
 * Investigate macros & parameters: https://marclamberti.com/blog/templates-macros-apache-airflow/
 
 ## Reading / links
