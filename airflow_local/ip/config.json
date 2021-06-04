@@ -1,0 +1,15 @@
+{
+    "airflow_args": {
+        "airflow_version": "2.0.1",
+        "python_version": "3.7",
+        "constraints_url": "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+    },
+    "sample_db_creds": {
+        "host": "${MY_HOST}",
+        "username": "${MY_USERNAME}",
+        "password": "${MY_PWD}",
+        "db_name": "${MY_DB}",
+        "db_schema": "${MY_DB_SCHEMA}",
+        "ip_tbl_list": "${MY_IP_TBLS}"
+    }
+}

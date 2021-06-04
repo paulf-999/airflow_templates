@@ -1,10 +1,20 @@
 default: install_airflow
 
-AIRFLOW_VERSION=2.0.1
-PYTHON_VERSION=3.7
-CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
-# For example: https://raw.githubusercontent.com/apache/airflow/constraints-2.0.1/constraints-3.6.txt
-
+CONFIG_FILE=ip/config.json
+########################################
+# fetch inputs from config (json) file
+########################################
+# airflow args
+$(eval AIRFLOW_VERSION=$(shell jq '.airflow_args.airflow_version' ${CONFIG_FILE}))
+$(eval PYTHON_VERSION=$(shell jq '.airflow_args.python_version' ${CONFIG_FILE}))
+$(eval CONSTRAINT_URL=$(shell jq '.airflow_args.constraints_url' ${CONFIG_FILE}))
+# sample db cred args
+$(eval HOST=$(shell jq '.sample_db_creds.host' ${CONFIG_FILE}))
+$(eval USERNAME=$(shell jq '.sample_db_creds.username' ${CONFIG_FILE}))
+$(eval PWD=$(shell jq '.sample_db_creds.password' ${CONFIG_FILE}))
+$(eval DB_NAME=$(shell jq '.sample_db_creds.db_name' ${CONFIG_FILE}))
+$(eval DB_SCHEMA=$(shell jq '.sample_db_creds.db_schema' ${CONFIG_FILE}))
+$(eval IP_TBLS=$(shell jq '.sample_db_creds.ip_tbl_list' ${CONFIG_FILE}))
 
 install_airflow:
 	pip install apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL}
@@ -34,5 +44,12 @@ start_scheduler:
 	# open a new terminal or else run webserver with ``-D`` option to run it as a daemon
 	airflow scheduler
 
-# visit localhost:8080 in the browser and use the admin account you just
-# created to login. Enable the example_bash_operator dag in the home page
+	# visit localhost:8080 in the browser and use the admin account just created to login
+
+create_airflow_variables:
+	@airflow variables set host ${HOST}
+	@airflow variables set username ${USERNAME}
+	@airflow variables set password ${PWD}
+	@airflow variables set db_name ${DB_NAME}
+	@airflow variables set db_schema ${DB_SCHEMA}
+	@airflow variables set ip_tbl_list ${IP_TBLS}
