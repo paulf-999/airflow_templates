@@ -11,5 +11,8 @@
         "db_name": "${MY_DB}",
         "db_schema": "${MY_DB_SCHEMA}",
         "ip_tbl_list": "${MY_IP_TBLS}"
+    },
+    "other": {
+        "slack_token": "${MY_SLACK_TOKEN}"
     }
 }

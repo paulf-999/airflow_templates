@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Python Version  : 3.7
-* Name          : mssql_query.py
+* Name          : template_mssql_query.py
 * Description   : Boilerplate MSSQL query script.
 * Created       : 04-06-2021
 * Usage         : python3 mssql_query.py
@@ -17,6 +17,7 @@ from time import time
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.python_operator import PythonOperator
+from airflow.utils.dates import days_ago
 from airflow.models import Variable
 
 # Set up a specific logger with our desired output level
@@ -25,14 +26,14 @@ logger = logging.getLogger('airflow.task')
 logger.setLevel(logging.INFO)
 
 default_args = {
-    'owner': 'aws',
+    'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 2, 20),
-    'provide_context': True
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'start_date': days_ago(1)
 }
 
-dag = DAG(
-    'template_mssql_query', default_args=default_args, schedule_interval=None)
+dag = DAG('template_mssql_query', default_args=default_args, schedule_interval=None, tags=['python','template'])
 
 def mssql_query(**kwargs):
     """ generic mssql query function """

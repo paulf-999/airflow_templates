@@ -1,1 +1,0 @@
-airflow connections add 'my_mssql' --conn-uri mssql+pyodbc://${USERNAME}:${PASSWORD}@${HOST}
