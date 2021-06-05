@@ -10,6 +10,7 @@ Python Version  : 3.7
 __author__ = "Paul Fry"
 __version__ = "0.1"
 
+import os
 import logging
 from airflow.models.dag import DAG
 from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
@@ -21,6 +22,8 @@ logging.basicConfig(format='%(message)s')
 logger = logging.getLogger('airflow.task')
 logger.setLevel(logging.INFO)
 
+slack_token = Variable.get("slack_token")
+
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -29,10 +32,8 @@ default_args = {
     'start_date': days_ago(1)
 }
 
-slack_token = Variable.get("slack_token")
-
 with DAG(
-        dag_id='slack_test_dag',
+        dag_id=os.path.basename(__file__).replace(".py", ""),
         default_args=default_args,
         tags=['python','template']
     ) as dag:
@@ -44,4 +45,3 @@ with DAG(
         message='Hello, World!',
         channel='#airflow-integration'
     )
-    

@@ -4,12 +4,13 @@ Python Version  : 3.7
 * Name          : template_mssql_query.py
 * Description   : Boilerplate MSSQL query script.
 * Created       : 04-06-2021
-* Usage         : python3 mssql_query.py
+* Usage         : python3 template_mssql_query.py
 """
 
 __author__ = "Paul Fry"
 __version__ = "0.1"
 
+import os
 import sys
 import logging
 import pymssql
@@ -32,8 +33,6 @@ default_args = {
     'email_on_retry': False,
     'start_date': days_ago(1)
 }
-
-dag = DAG('template_mssql_query', default_args=default_args, schedule_interval=None, tags=['python','template'])
 
 def mssql_query(**kwargs):
     """ generic mssql query function """
@@ -88,8 +87,14 @@ def get_user_ips():
 
     return db_name, db_schema, ip_tbl_list, db_host, username, password
 
-mssql_select_all_query = PythonOperator(
-    task_id='mssql_select_all_query',
-    python_callable=mssql_query,
-    dag=dag
-)
+with DAG(
+        dag_id=os.path.basename(__file__).replace(".py", ""),
+        default_args=default_args,
+        schedule_interval=None,
+        tags=['python','template']
+) as dag:
+    mssql_select_all_query = PythonOperator(
+        task_id='mssql_select_all_query',
+        python_callable=mssql_query,
+        dag=dag
+    )
