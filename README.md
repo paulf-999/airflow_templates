@@ -29,3 +29,4 @@ To create an Airflow connection, add / change the entries listed in the Makefile
 ## Reading / links
 
 https://marclamberti.com/blog/templates-macros-apache-airflow/
+https://stackoverflow.com/questions/46059161/airflow-how-to-pass-xcom-variable-into-python-function

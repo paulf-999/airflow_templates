@@ -4,7 +4,7 @@ Python Version  : 3.7
 * Name          : template_slack_post.py
 * Description   : Boilerplate slack post Airflow DAG script.
 * Created       : 04-06-2021
-* Usage         : python3 slack.py
+* Usage         : python3 template_slack_post.py
 """
 
 __author__ = "Paul Fry"
@@ -35,6 +35,7 @@ default_args = {
 with DAG(
         dag_id=os.path.basename(__file__).replace(".py", ""),
         default_args=default_args,
+        schedule_interval=None,
         tags=['python','template']
     ) as dag:
 

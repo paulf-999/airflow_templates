@@ -15,8 +15,8 @@ import sys
 import logging
 import pymssql
 from time import time
-from airflow import DAG
 from datetime import datetime
+from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 from airflow.models import Variable

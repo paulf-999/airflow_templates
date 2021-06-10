@@ -60,9 +60,14 @@ create_airflow_variables:
 	@airflow variables set db_schema ${DB_SCHEMA}
 	@airflow variables set ip_tbl_list ${IP_TBLS}
 	@airflow variables set slack_token ${SLACK_TOKEN}
+	@airflow variables set AWS_ACCESS_KEY ${AWS_ACCESS_KEY}
+	@airflow variables set AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 
 create_airflow_connections:	
 	$(info [+] Create some (example) Airflow connections)
 	airflow connections add slack_connection --conn-type http --conn-host https://hooks.slack.com/services --conn-password ${SLACK_TOKEN}
 	#tbc
 	#airflow connections add 'my_mssql' --conn-uri mssql+pyodbc://${USERNAME}:${PASSWORD}@${HOST}
+
+create_aws_connection:
+	airflow connections add aws_conn --conn-type aws --conn-login ${AWS_ACCESS_KEY} --conn-password ${AWS_SECRET_ACCESS_KEY}
