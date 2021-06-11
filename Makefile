@@ -73,5 +73,7 @@ create_aws_connection:
 	airflow connections add aws_conn --conn-type aws --conn-login ${AWS_ACCESS_KEY} --conn-password ${AWS_SECRET_ACCESS_KEY}
 
 trigger_dag:
-	airflow dags trigger wip_template_dms_task_dag --conf '{"dms_task_name":"example-task"}'
-	#airflow dags trigger wip_template_dms_task_dag
+	airflow dags trigger template_task_failure_trigger
+
+trigger_dag_w_ip:
+	airflow dags trigger template_dms_task_dag --conf '{"dms_task_name":"example-task"}'

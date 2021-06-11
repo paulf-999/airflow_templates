@@ -3,9 +3,7 @@ import sys
 import logging
 from time import time
 import boto3
-from datetime import datetime
 from airflow import DAG
-from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 from airflow.models import Variable
@@ -51,11 +49,14 @@ def dms_check_task_status(**kwargs):
 
 def start_task(**kwargs):
     """ Function to conditionally start a DMS task """
-    dms_task_name = 'example-task'
-    dms_task_status = 'ready'
+    #get dms task name from cmd line
+    dms_task_name = kwargs['dag_run'].conf.get('dms_task_name')
+    ti = kwargs['ti']
+    #get the task status from the task 'get_dms_task_status'
+    dms_task_status = ti.xcom_pull(task_ids='get_dms_task_status')
+    #init the task var
     task = ''
     task_stop_status = ['stopped','failed','ready']
-    ti = kwargs['ti']
     
     try:                  
         dms_task_arn = dms_client.describe_replication_tasks(
@@ -96,8 +97,15 @@ with DAG(
         schedule_interval=None,
         tags=['python','template']
 ) as dag:
-    describe_dms_tasks = PythonOperator(
+    describe_dms_task = PythonOperator(
         task_id='get_dms_task_status',
         python_callable=dms_check_task_status,
         provide_context=True
     )
+    start_dms_task = PythonOperator(
+        task_id='start_dms_task',
+        python_callable=start_task,
+        provide_context=True
+    )
+
+describe_dms_task >> start_dms_task

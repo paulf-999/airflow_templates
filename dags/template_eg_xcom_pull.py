@@ -1,10 +1,19 @@
+#!/usr/bin/env python3
+"""
+Python Version  : 3.7
+* Name          : template_eg_xcom_pull_dag.py
+* Description   : Boilerplate Airflow DAG script.
+* Created       : 11-06-2021
+* Usage         : python3 template_eg_xcom_pull_dag.py
+"""
+
+__author__ = "Paul Fry"
+__version__ = "0.1"
+
 import os
-import sys
 import logging
 from time import time
-from datetime import datetime
 from airflow import DAG
-from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
@@ -25,18 +34,26 @@ def gen_op(**kwargs):
     """ generate sample op """
     START_TIME = time()
     logger.debug(f"Function called: get_user_ips()")
+
     ti = kwargs['ti']
     eg_op = []
 
     for i in range(0,4):
         eg_op.append(i)
 
+    logger.debug(f"Function finished: gen_op() finished in {round(time() - START_TIME, 2)} seconds")
+
     return eg_op
 
 def read_op(**kwargs):
     """ read in sample op from subsequent step """
+    START_TIME = time()
+    logger.debug(f"Function called: get_user_ips()")
+
     ti = kwargs['ti']
     ls = ti.xcom_pull(task_ids='gen_op_eg')
+
+    logger.debug(f"Function finished: read_op() finished in {round(time() - START_TIME, 2)} seconds")
 
     return ls
 
