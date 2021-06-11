@@ -63,23 +63,44 @@ def read_op(**kwargs):
 
     return
 
-# SLACK_CHANNEL: the name of a slack channel to post task failure message
-# SLACK_API_TOKEN
+def remove_chars(ip_string):
+
+    chars_to_remove = "('),"
+
+    for char in chars_to_remove:
+        ip_string = ip_string.replace(char, "")
+
+    return ip_string
+
 def slack_failure_msg(context):
     dag_id = context.get('task_instance').dag_id,
     task_id = context.get('task_instance').task_id,
     exec_date = context.get('execution_date').strftime('%Y-%m-%d/%H:%M'),
-    log_url=context.get('task_instance').log_url
+    log_url = context.get('task_instance').log_url
     
+    #dag_id = remove_chars(dag_id)
+
     failure_alert = SlackWebhookOperator(
         task_id='slack_failure_msg',
         http_conn_id='slack_connection',
         webhook_token=f'{slack_token}',
         channel='#airflow-integration',
-        message=f'''Airflow Task Failed:\nAirflow DAG name: {dag_id}\nTask ID: {task_id}\nExec date: {exec_date}\nLog: {log_url}'''
+        message = """
+        :red_circle: Airflow Task Failed.
+        *Dag*:\t\t\t\t\t\t{dag}
+        *Task*:\t\t\t\t\t\t{task}
+        *Execution Time*:\t{exec_date}
+        *Log Url*:\t\t\t\t\t{log_url}
+        """.format(
+            task=context.get('task_instance').task_id,
+            dag=context.get('task_instance').dag_id,
+            ti=context.get('task_instance'),
+            exec_date=context.get('execution_date'),
+            log_url=context.get('task_instance').log_url,
+        )
     )
-      
-    failure_alert.execute(context=context)
+
+    return failure_alert.execute(context=context)
 
 default_args = {
     'owner': 'airflow',
@@ -94,7 +115,7 @@ with DAG(
         dag_id=os.path.basename(__file__).replace(".py", ""),
         default_args=default_args,
         schedule_interval=None,
-        tags=['wip','template', 'python']
+        tags=['template', 'python']
     ) as dag:
 
     gen_op_tsk = PythonOperator(
