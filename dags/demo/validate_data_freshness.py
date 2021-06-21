@@ -108,7 +108,7 @@ with DAG(
     )
 
     read_op_tsk = PythonOperator(
-        task_id="read_op_in_sub_task", python_callable=read_op, provide_context=True
+        task_id="data_freshness_failure_alert", python_callable=read_op, provide_context=True
     )
 
 gen_op_tsk >> read_op_tsk
