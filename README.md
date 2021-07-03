@@ -1,6 +1,6 @@
 # Overview (local Airflow)
 
-Simple instructions for a local install of Airflow.
+Simple instructions for a local install of Airflow (see the `Makefile`).
 
 To create a local install of Airflow containing the prerequisite files, run `make`!
 
