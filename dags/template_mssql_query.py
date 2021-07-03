@@ -40,6 +40,7 @@ def mssql_query(**kwargs):
 
     db_name, db_schema, ip_tbl_list, db_host, username, password = get_user_ips()
 
+    # initialise the var
     query_result_to_return = ''
     sql_query = f"SELECT * FROM {db_name}.{db_schema}.{ip_tbl_list}"
 
@@ -53,7 +54,7 @@ def mssql_query(**kwargs):
         
         # Create a cursor from the connection
         with conn.cursor() as cursor:
-            logger.info("running query: %s", sql_query)
+            logger.info(f"Running query: {sql_query}", )
 
             cursor.execute(sql_query)
 
@@ -61,10 +62,10 @@ def mssql_query(**kwargs):
             for item in query_result:
                 query_result_to_return += f"{item[1]}\n"
 
-        logger.info("finished SQL query")
+        logger.info("Finished SQL query")
 
     except:
-        logger.error("Error when creating pymssql database connection: %s", sys.exc_info()[0])
+        logger.error(f"Error when creating pymssql database connection: {sys.exc_info()[0]}", )
 
     logger.debug(f"Function finished: main() finished in {round(time() - START_TIME, 2)} seconds")
 
@@ -94,6 +95,5 @@ with DAG(
 ) as dag:
     mssql_select_all_query = PythonOperator(
         task_id='mssql_select_all_query',
-        python_callable=mssql_query,
-        dag=dag
+        python_callable=mssql_query
     )

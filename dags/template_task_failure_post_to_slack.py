@@ -38,8 +38,6 @@ def gen_op(**kwargs):
     for i in range(0,4):
         eg_op.append(i)
 
-    logger.info(f"eg_op = {eg_op}")
-
     logger.debug(f"Function finished: gen_op() finished in {round(time() - START_TIME, 2)} seconds")
 
     return eg_op

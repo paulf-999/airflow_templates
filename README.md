@@ -6,10 +6,14 @@ To create a local install of Airflow containing the prerequisite files, run `mak
 
 # Example DAGs
 
-There's currently 2 templated DAGs:
+There are currently 6 template DAGs:
 
-* `template_mssql_query.py`
-* and `template_slack_post.py`
+1. `boilerplate_day.py`
+2. `template_slack_post.py`
+3. `template_task_failure_post_to_slack.py`
+4. `template_mssql_query.py`
+5. `template_eg_xcom_pull.py`
+6. `template_dms_task_dag.py`
 
 These make use of automated (scripted CLI commands) variable and connection creation. These are described below:
 
@@ -17,14 +21,12 @@ These make use of automated (scripted CLI commands) variable and connection crea
 
 To create an Airflow variable, add / change the entries listed in the Makefile recipe `create_airflow_variables`
 
-## Airflow connections 
+## Airflow connections
 
 To create an Airflow connection, add / change the entries listed in the Makefile recipe `create_airflow_connections`
 
 # Todo:
 
-* write mssql op to an s3 bucket???
-* dbt eg
 * Investigate macros & parameters: https://marclamberti.com/blog/templates-macros-apache-airflow/
 ## Reading / links
 
