@@ -1,4 +1,4 @@
-# WIP - Overview (local Airflow)
+# Overview (local Airflow)
 
 Simple instructions for a local install of Airflow.
 
