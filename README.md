@@ -39,18 +39,18 @@ These make use of automated (scripted CLI commands) variable and connection crea
 
 ## 2. How-to run
 
-#### Local Airflow install
+### Local Airflow install
 
 To create a local install of Airflow containing the prerequisite files, run `make`!
 
-#### Running Airflow locally, post-install
+### Running Airflow locally, post-install
 
 To subsequently run Airflow (post-install), do the following:
 
 * In a terminal window, navigate to the Git repo root and enter `make start_webserver`
 * In another terminal window, navigate to the Git repo root and enter `make start_scheduler`
 
-#### Scripted Airflow variable creation via CLI
+### Scripted Airflow variable creation via CLI
 
 To create an Airflow variable, add / change the entries listed in the Makefile recipe `create_airflow_variables`
 
@@ -60,11 +60,11 @@ To create an Airflow connection, add / change the entries listed in the Makefile
 
 ---
 
-### Todo
+## Todo
 
 * Investigate macros & parameters: https://marclamberti.com/blog/templates-macros-apache-airflow/
 
-### Reading / links
+### Reading / links (note to self)
 
 https://marclamberti.com/blog/templates-macros-apache-airflow/
 https://stackoverflow.com/questions/46059161/airflow-how-to-pass-xcom-variable-into-python-function
