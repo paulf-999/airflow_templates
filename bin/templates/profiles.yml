@@ -1,0 +1,15 @@
+${DBT_PROFILE_NAME}:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: ${SNOWFLAKE_ACCOUNT}
+      user: ${SNOWFLAKE_USER}
+      role: ${SNOWFLAKE_ROLE}
+      password: ${SNOWFLAKE_PASS}
+
+      database: ${SNOWFLAKE_DB}
+      warehouse: ${SNOWFLAKE_WH}
+      schema: ${SNOWFLAKE_SCHEMA}
+      threads: 4
+      client_session_keep_alive: False

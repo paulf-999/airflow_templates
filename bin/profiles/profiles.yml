@@ -1,0 +1,15 @@
+bikestores_cicd_demo:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('DEMO_SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('DEMO_DBT_USER') }}"
+      role: "{{ env_var('DEMO_DBT_ROLE') }}"
+      password: "{{ env_var('DEMO_DBT_PASS') }}"
+
+      database: bikestores_curated_db
+      warehouse: "{{ env_var('DEMO_WH') }}"
+      schema: "{{ env_var('DEMO_SCHEMA') }}"
+      threads: 4
+      client_session_keep_alive: False

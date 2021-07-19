@@ -18,10 +18,13 @@ $(eval IP_TBLS=$(shell jq '.sample_db_creds.ip_tbl_list' ${CONFIG_FILE}))
 # other
 $(eval SLACK_TOKEN=$(shell jq '.other.slack_token' ${CONFIG_FILE}))
 
+deps:
+	pip3 install airflow-dbt
+
 install_airflow:
 	$(info [+] Install any required python / airflow libraries)
 	pip install apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL}
-	pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"	
+	pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"
 	pip install apache-airflow-providers-slack --constraint "${CONSTRAINT_URL}"
 	# the 2 below are for any db-related operations
 	#pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
@@ -63,17 +66,21 @@ create_airflow_variables:
 	@airflow variables set AWS_ACCESS_KEY ${AWS_ACCESS_KEY}
 	@airflow variables set AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 
-create_airflow_connections:	
+create_airflow_connections:
 	$(info [+] Create some (example) Airflow connections)
 	airflow connections add slack_connection --conn-type http --conn-host https://hooks.slack.com/services --conn-password ${SLACK_TOKEN}
-	#tbc
-	#airflow connections add 'my_mssql' --conn-uri mssql+pyodbc://${USERNAME}:${PASSWORD}@${HOST}
 
 create_aws_connection:
+	$(info [+] Create an Airflow AWS connection)
 	airflow connections add aws_conn --conn-type aws --conn-login ${AWS_ACCESS_KEY} --conn-password ${AWS_SECRET_ACCESS_KEY}
 
 trigger_dag:
-	airflow dags trigger template_task_failure_trigger
+	$(info [+] Trigger an Airflow DAG)
+	airflow dags trigger dbt_dag
 
 trigger_dag_w_ip:
+	$(info [+] Trigger an Airflow DAG with input provided)
 	airflow dags trigger template_dms_task_dag --conf '{"dms_task_name":"example-task"}'
+
+airflow_dbt:
+	$(info [+] Make use of the Python package, 'airflow-dbt'. Note: there is a prerequisite Python package, listed in `deps`)
