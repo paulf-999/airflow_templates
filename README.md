@@ -12,6 +12,7 @@ To create a local install of Airflow containing the prerequisite files, run `mak
     * Example DAGs
 2. How-to run
     * Local Airflow install
+    * Running Airflow locally, post-install
     * Scripted Airflow variable creation via CLI
     * Scripted Airflow connection creation via CLI
 
