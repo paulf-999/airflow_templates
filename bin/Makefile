@@ -1,4 +1,4 @@
-default: init_dbt_project setup_dbt_project_file validate_conn
+all: init_dbt_project setup_dbt_project_file validate_conn
 
 export DBT_PROFILE_NAME=bikestores_cicd_demo
 export DBT_PROJECT_NAME=bikestores

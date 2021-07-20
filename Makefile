@@ -1,4 +1,4 @@
-default: install_airflow init_airflow_db create_admin_user
+all: install_airflow init_airflow_db create_admin_user
 
 CONFIG_FILE=ip/config.json
 ########################################
