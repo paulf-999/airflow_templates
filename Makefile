@@ -20,6 +20,7 @@ $(eval SLACK_TOKEN=$(shell jq '.other.slack_token' ${CONFIG_FILE}))
 
 deps:
 	pip3 install airflow-dbt
+	brew install jq
 
 install_airflow:
 	$(info [+] Install any required python / airflow libraries)
