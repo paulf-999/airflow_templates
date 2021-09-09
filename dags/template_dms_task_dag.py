@@ -17,6 +17,7 @@ AWS_ACCESS_KEY = Variable.get("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY = Variable.get("AWS_SECRET_ACCESS_KEY")
 
 dms_client = boto3.client('dms',
+    region='ap-southeast-2',
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
@@ -41,7 +42,7 @@ def dms_check_task_status(**kwargs):
 
         if task['Status'] == 'stopped':
             logger.info(f"DMS task name: {task['ReplicationTaskIdentifier']}. Status: {task['Status']}.\nReason: {task['StopReason']}")
-        
+
         return task['Status']
 
     except:
@@ -57,8 +58,8 @@ def start_task(**kwargs):
     #init the task var
     task = ''
     task_stop_status = ['stopped','failed','ready']
-    
-    try:                  
+
+    try:
         dms_task_arn = dms_client.describe_replication_tasks(
                     Filters=[{'Name': 'replication-task-id','Values': [dms_task_name]}]
         )['ReplicationTasks'][0]["ReplicationTaskArn"]
@@ -73,7 +74,7 @@ def start_task(**kwargs):
                     ReplicationTaskArn=dms_task_arn,
                     StartReplicationTaskType='start-replication'
                 )['ReplicationTask']
-                
+
             except Exception as e:
                 logger.info("Starting DMS Task with StartReplicationTaskType as 'reload-target'")
                 if 'START_REPLICATION, valid only for tasks running for the first time' in str(e):
