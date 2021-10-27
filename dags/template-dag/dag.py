@@ -54,5 +54,5 @@ with DAG(dag_id=os.path.basename(__file__).replace(".py", ""), default_args=defa
 
     read_op_in_sub_tsk = PythonOperator(task_id="eg_task", python_callable=hello_world, provide_context=True)
 
-    # graph
-    start_task > read_op_in_sub_tsk > end_task
+# graph
+start_task >> read_op_in_sub_tsk >> end_task

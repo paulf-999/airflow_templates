@@ -17,7 +17,7 @@ AWS_ACCESS_KEY = Variable.get("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY = Variable.get("AWS_SECRET_ACCESS_KEY")
 
 dms_client = boto3.client('dms',
-    region='ap-southeast-2',
+    region_name='ap-southeast-2',
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
