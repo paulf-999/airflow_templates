@@ -1,6 +1,7 @@
 SHELL = /bin/sh
 
-all: init_airflow_db start_webserver start_scheduler
+# note, you'll need to start the scheduler (using 'make start_scheduler') in a separate shell
+all: init_airflow_db start_webserver
 
 config_file=config.json
 ########################################

@@ -14,6 +14,7 @@ import os
 import sys
 import logging
 import importlib
+import pendulum
 from time import time
 from airflow import DAG
 from airflow.utils.dates import days_ago
@@ -21,10 +22,16 @@ from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 
+# TODOs
+# 1) Make the DAG timezone-aware
+# 3) Confirm other reqs, e.g. task groups
+
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("airflow.task")
 logger.setLevel(logging.INFO)
+
+local_tz = pendulum.timezone("Australia/Melbourne")
 
 dagpath = os.path.dirname(os.path.abspath(__file__))
 dagname = os.path.basename(dagpath)
@@ -36,23 +43,18 @@ if dagroot not in sys.path:
 helpers = importlib.import_module(".__dag_helpers", package=dagname)
 queries = importlib.import_module(".__sql_queries", package=dagname)
 
-default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": days_ago(1)}
+default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 
-def hello_world(**kwargs):
-
-    print("Hello world!")
-
-    return
-
-
-with DAG(dag_id=os.path.basename(__file__).replace(".py", ""), default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    read_op_in_sub_tsk = PythonOperator(task_id="eg_task", python_callable=hello_world, provide_context=True)
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.get_datetime, provide_context=True)
+
+    gen_metadata_task = PythonOperator(task_id="gen_metadata_task", python_callable=helpers.gen_metadata, provide_context=True)
 
 # graph
-start_task >> read_op_in_sub_tsk >> end_task
+start_task >> hello_world_task >> gen_metadata_task >> end_task
