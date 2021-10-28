@@ -4,6 +4,8 @@ Simple instructions for a local install of Airflow (see the `Makefile`).
 
 To create a local install of Airflow containing the prerequisite files, run `make`!
 
+Note: boilerplate_dag is also timezone-aware (i.e., uses the python module 'pendulum').
+
 ---
 
 ## Contents
@@ -28,21 +30,13 @@ In addition, the repo contains 6 boilerplate Airflow DAGs, listed below:
 
 | DAG | Description                  |
 | -------| -----------------------------|
-| boilerplate_day.py | Stripped back boilerplate/starting point to use for building a DAG. |
+| template_dag | Stripped back boilerplate/starting point to use for building a DAG. Makes use of pendulum, to make DAGs timezone-aware. |
 | template_slack_post.py | Cut back example showing the syntax needed to write to Slack from Airflow. |
 | template_task_failure_post_to_slack.py | Extends the above example, to instead post to Slack upon any task failing within an Airflow DAG. |
 | template_mssql_query.py | Demonstrates the syntax needed to perform an MSSQL query. |
 | template_eg_xcom_pull.py | Example of using XCom to retrieve the output of previous Airflow tasks. |
 | template_dms_task_dag.py | Integrates with AWS DMS to check and invoke a DMS job. |
 | template_dbt_dag.py | Integrates with DBT to run a DBT test, then DBT run command. |
-
-1. `boilerplate_day.py`
-2. `template_slack_post.py`
-3. `template_task_failure_post_to_slack.py`
-4. `template_mssql_query.py`
-5. `template_eg_xcom_pull.py`
-6. `template_dms_task_dag.py`
-7. `template_dbt_dag.py`
 
 These make use of automated (scripted CLI commands) variable and connection creation.
 
