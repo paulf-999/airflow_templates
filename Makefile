@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 
 # note, you'll need to start the scheduler (using 'make start_scheduler') in a separate shell
-all: init_airflow_db
+all: installations init_airflow_db
 
 config_file=config.json
 ########################################
