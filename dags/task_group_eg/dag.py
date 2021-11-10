@@ -24,11 +24,6 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
 
-# TODOs
-# 1) WIP - Fetch DAG metadata
-# 2) WIP - Create task groups
-# 3) Not started - Use task decorators
-
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("airflow.task")

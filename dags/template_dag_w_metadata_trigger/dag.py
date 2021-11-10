@@ -23,6 +23,12 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
+# TODOs
+# 1) WIP - Fetch DAG metadata
+# 2) Done - Create task groups
+# 3) Not started - Use task decorators
+# 4) Airflow templates & unit tests
+
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("airflow.task")
@@ -43,13 +49,22 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 
+def trigger(context, dag_run_obj):
+    dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
+    return dag_run_obj
+
+
 with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    trigger = TriggerDagRunOperator(task_id="trigger_dagrun", trigger_dag_id="example_trigger_target_dag")
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.get_datetime, provide_context=True)
+
+    # gen_metadata_task = PythonOperator(task_id="gen_metadata_task", python_callable=helpers.gen_metadata, provide_context=True)
+
+    # trigger_task = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="wip_get_dag_metadata", conf={"dag_run_id": "template_dag"})
 
 # graph
-start_task >> trigger >> end_task
+start_task >> hello_world_task >> end_task
