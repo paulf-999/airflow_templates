@@ -29,7 +29,7 @@ def post_duration(context, result):
     print(f"owner = {context['task_instance'].task.owner}")
     print(f"task state = {context['task_instance'].state}")
     print(f"start time = {datetime.strftime(task._tracking_start_time, '%d-%m-%Y %H:%M:%S')}")
-    print(f"dnd time = {datetime.strftime(_tracking_end_time, '%d-%m-%Y %H:%M:%S')}")
+    print(f"end time = {datetime.strftime(_tracking_end_time, '%d-%m-%Y %H:%M:%S')}")
     print(f"task duration: {duration.in_words()}")
     print("############################################################")
 

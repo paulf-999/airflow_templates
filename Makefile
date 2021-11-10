@@ -53,7 +53,7 @@ clean:
 
 init_airflow_db:
 	$(info [+] Initialize the airflow db)
-	@airflow db init
+	@airflow db upgrade
 
 create_admin_user:
 	$(info [+] Create an admin user for Airflow)
