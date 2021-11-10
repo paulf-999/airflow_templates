@@ -24,6 +24,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 # TODOs
+# confirm if def trigger() is needed? I think it's redundant
 # 1) WIP - Fetch DAG metadata
 # 2) Done - Create task groups
 # 3) Not started - Use task decorators
@@ -60,11 +61,13 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.get_datetime, provide_context=True)
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world, provide_context=True)
 
-    # gen_metadata_task = PythonOperator(task_id="gen_metadata_task", python_callable=helpers.gen_metadata, provide_context=True)
+    gen_payload_eg = PythonOperator(task_id="hello_world_task", python_callable=helpers.get_context, provide_context=True)
 
-    # trigger_task = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="wip_get_dag_metadata", conf={"dag_run_id": "template_dag"})
+    # send payload to 'get_dag_metadata' task
+    # wip - need to first retrieve the payload (i.e. the conf ip) from the previous task
+    send_payload_to_get_dag_metadata = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="wip_get_dag_metadata", conf={"dag_run_id": "template_dag"})
 
 # graph
-start_task >> hello_world_task >> end_task
+start_task >> hello_world_task >> gen_payload_eg >> send_payload_to_get_dag_metadata >> end_task
