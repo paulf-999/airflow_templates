@@ -47,11 +47,6 @@ def gen_metadata(**kwargs):
     # return ",\n".join([f"{re.sub('[^a-zA-Z0-9]+','-',k)}={v}" for k, v in kwargs.items()])
 
 
-def trigger(context, dag_run_obj):
-    dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
-    return dag_run_obj
-
-
 def get_datetime():
     """
     Description:

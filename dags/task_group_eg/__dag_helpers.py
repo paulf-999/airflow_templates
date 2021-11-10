@@ -29,7 +29,6 @@ def gen_metadata(**kwargs):
     run_id = context["run_id"]
     task_id = context["ti"].task_id
     job_id = context["ti"].job_id
-    state = context["ti"].state
     dag_run = context["dag_run"]
     dag_run_start_date = context["dag_run"].start_date
 
@@ -45,11 +44,6 @@ def gen_metadata(**kwargs):
     print("########################################")
 
     # return ",\n".join([f"{re.sub('[^a-zA-Z0-9]+','-',k)}={v}" for k, v in kwargs.items()])
-
-
-def trigger(context, dag_run_obj):
-    dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
-    return dag_run_obj
 
 
 def get_datetime():
