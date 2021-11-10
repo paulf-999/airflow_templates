@@ -49,7 +49,7 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    trigger = TriggerDagRunOperator(task_id="trigger_dagrun", trigger_dag_id="example_trigger_target_dag")
+    trigger = TriggerDagRunOperator(task_id="trigger_dagrun", trigger_dag_id="template_dag")
 
 # graph
 start_task >> trigger >> end_task

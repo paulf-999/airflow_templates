@@ -45,6 +45,16 @@ def gen_metadata(**kwargs):
     # return ",\n".join([f"{re.sub('[^a-zA-Z0-9]+','-',k)}={v}" for k, v in kwargs.items()])
 
 
+def get_context(**kwargs):
+    context = get_current_context()
+    payload = context["dag_run"].conf
+
+    context["run_id"]
+    # prev_execution_date
+
+    print(f"payload = {payload}")
+
+
 def trigger(context, dag_run_obj):
     dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
     return dag_run_obj
