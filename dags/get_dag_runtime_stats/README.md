@@ -1,4 +1,4 @@
-## Airflow DAG Template
+## Template DAG to fetch the runtime stats of a specified Airflow dag_run
 
 This diretory describes the template Airflow DAG file/folder structure, as well as conventions used.
 

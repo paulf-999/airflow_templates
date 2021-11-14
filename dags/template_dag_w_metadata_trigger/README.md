@@ -1,4 +1,4 @@
-## Airflow DAG Template
+## Airflow DAG Template - including step to fetch DAG metadata
 
 This diretory describes the template Airflow DAG file/folder structure, as well as conventions used.
 
