@@ -47,12 +47,15 @@ def gen_metadata(**kwargs):
 
 def get_context(**kwargs):
     context = get_current_context()
-    payload = context["dag_run"].conf
+    payload = str(context["dag"])
 
-    context["run_id"]
-    # prev_execution_date
+    print(f"context = {context}")
+
+    this_dag_id = re.sub("<DAG: |>", "", str(context["dag"]))
 
     print(f"payload = {payload}")
+
+    return this_dag_id
 
 
 def trigger(context, dag_run_obj):

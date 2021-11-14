@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+
+# TODO!!
+# within 'template_dag_w_metadata_trigger.__dag_helpers.py'...
+# dag_id is currently being manually passed in
+# it should instead be read in from the CONF!
+# should be able to use the payload var
 """
 Python Version  : 3.7
 * Name          : template_dag.py
@@ -22,6 +28,8 @@ from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
+from airflow.operators.python import get_current_context
+
 
 # TODOs
 # confirm if def trigger() is needed? I think it's redundant
@@ -50,9 +58,11 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 
-def trigger(context, dag_run_obj):
-    dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
-    return dag_run_obj
+def read_xcom(**kwargs):
+    ti = kwargs["ti"]
+    payload = ti.xcom_pull(task_ids="gen_payload")
+
+    print(f"payload = {payload}")
 
 
 with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
@@ -61,13 +71,21 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world, provide_context=True)
+    example_task = PythonOperator(task_id="example_task", python_callable=helpers.hello_world, provide_context=True)
 
-    gen_payload_eg = PythonOperator(task_id="hello_world_task", python_callable=helpers.get_context, provide_context=True)
+    gen_payload = PythonOperator(task_id="gen_payload", python_callable=helpers.get_context, provide_context=True)
 
-    # send payload to 'get_dag_metadata' task
-    # wip - need to first retrieve the payload (i.e. the conf ip) from the previous task
-    send_payload_to_get_dag_metadata = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="wip_get_dag_metadata", conf={"dag_run_id": "template_dag"})
+    # TODO: confirm best way to store the payload value as a var and pass as an input to the task below
+    # test_read_xcom = PythonOperator(task_id="gen_payload_eg", python_callable=read_xcom, provide_context=True)
+    # send payload to 'get_dag_runtime_stats' task
+
+    trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "template_dag_w_metadata_trigger"})
+
+    # in future, 'trigger_run_id' is likely to be a new param (MR is approved, but awaiting suite of unit test runs to complete)
+    # trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", trigger_run_id="template_dag_w_metadata_trigger")
 
 # graph
-start_task >> hello_world_task >> gen_payload_eg >> send_payload_to_get_dag_metadata >> end_task
+start_task >> example_task >> trigger_get_dag_metadata_dag >> end_task
+
+# target graph - WIP
+# start_task >> example_task >> gen_payload >> trigger_get_dag_metadata_dag >> end_task

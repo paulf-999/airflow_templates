@@ -11,6 +11,7 @@ config_file=config.json
 $(eval AIRFLOW_VERSION=$(shell jq '.airflow_args.airflow_version' ${config_file}))
 $(eval PYTHON_VERSION=$(shell jq '.airflow_args.python_version' ${config_file}))
 $(eval CONSTRAINT_URL=$(shell jq '.airflow_args.constraints_url' ${config_file}))
+$(eval AIRFLOW_HOME_DIR=$(shell jq '.other.airflow_home_dir' ${config_file}))
 # sample db cred args
 $(eval HOST=$(shell jq '.sample_db_creds.host' ${config_file}))
 $(eval USERNAME=$(shell jq '.sample_db_creds.username' ${config_file}))
@@ -46,6 +47,11 @@ install:
 	@#pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
 	# call routine to create the admin user
 	@make create_admin_user
+	# copy over additional config to be used to capture task runtime stats
+	# first you need to remove the quotes from the var
+	@$(eval AIRFLOW_HOME_DIR := $(subst $\",,$(AIRFLOW_HOME_DIR)))
+	@mkdir ${target_dir}
+	@cp notes/airflow_local_settings.py ${AIRFLOW_HOME_DIR}config2/
 
 .PHONY: clean
 clean:
