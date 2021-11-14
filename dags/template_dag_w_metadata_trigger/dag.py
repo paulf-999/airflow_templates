@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-
-# TODO!!
-# within 'template_dag_w_metadata_trigger.__dag_helpers.py'...
-# dag_id is currently being manually passed in
-# it should instead be read in from the CONF!
-# should be able to use the payload var
 """
 Python Version  : 3.7
 * Name          : template_dag.py
@@ -57,14 +51,6 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
-
-def read_xcom(**kwargs):
-    ti = kwargs["ti"]
-    payload = ti.xcom_pull(task_ids="gen_payload")
-
-    print(f"payload = {payload}")
-
-
 with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     # operators here, e.g.:
@@ -73,12 +59,6 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
 
     example_task = PythonOperator(task_id="example_task", python_callable=helpers.hello_world, provide_context=True)
 
-    gen_payload = PythonOperator(task_id="gen_payload", python_callable=helpers.get_context, provide_context=True)
-
-    # TODO: confirm best way to store the payload value as a var and pass as an input to the task below
-    # test_read_xcom = PythonOperator(task_id="gen_payload_eg", python_callable=read_xcom, provide_context=True)
-    # send payload to 'get_dag_runtime_stats' task
-
     trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "template_dag_w_metadata_trigger"})
 
     # in future, 'trigger_run_id' is likely to be a new param (MR is approved, but awaiting suite of unit test runs to complete)
@@ -86,6 +66,3 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
 
 # graph
 start_task >> example_task >> trigger_get_dag_metadata_dag >> end_task
-
-# target graph - WIP
-# start_task >> example_task >> gen_payload >> trigger_get_dag_metadata_dag >> end_task
