@@ -69,10 +69,11 @@ To create an Airflow connection, add / change the entries listed in the Makefile
 
 * Investigate macros & parameters: https://marclamberti.com/blog/templates-macros-apache-airflow/
 
-1. WIP - Fetch DAG metadata
-2. Done - Create task groups
-3. Not started - Use task decorators
-4. Airflow templates & unit tests
+1. Done - Fetch DAG metadata.
+2. WIP - For a given DAG, get the corresponding TASK metadata
+3. Done - Create task groups
+4. Not started - Use task decorators
+5. Airflow templates & unit tests
 
 ### Reading / links (note to self)
 
