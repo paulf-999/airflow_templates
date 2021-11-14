@@ -17,21 +17,18 @@ def pre_duration(context):
 
 
 def post_duration(context, result):
-    print(f"context = {context}")
     task = context["task_instance"].task
     duration = now() - task._tracking_start_time
     _tracking_end_time = now(local_tz)
+    print("####################################################################")
+    print("Task runtime metadata (task-level metadata, not DAG-level metadata")
+    print("####################################################################")
+    print(f"task start time = {datetime.strftime(task._tracking_start_time, '%d-%m-%Y %H:%M:%S')}")
+    print(f"task end time = {datetime.strftime(_tracking_end_time, '%d-%m-%Y %H:%M:%S')}")
+    print(f"task duration = {duration.in_words()}")
     print("############################################################")
-
-    print(f"dag = {context['dag']}")
-    print(f"run_id = {context['run_id']}")
-    print(f"task = {context['task_instance'].task.task_id}")
-    print(f"owner = {context['task_instance'].task.owner}")
-    print(f"task state = {context['task_instance'].state}")
-    print(f"start time = {datetime.strftime(task._tracking_start_time, '%d-%m-%Y %H:%M:%S')}")
-    print(f"end time = {datetime.strftime(_tracking_end_time, '%d-%m-%Y %H:%M:%S')}")
-    print(f"task duration: {duration.in_words()}")
-    print("############################################################")
+    # print(f"DAG start_date_time: {datetime.strftime(start_date_time, '%d-%m-%Y %H:%M:%S')}")
+    # print(f"end_date = {end_date}")
 
 
 def wrap(func, wrapper):

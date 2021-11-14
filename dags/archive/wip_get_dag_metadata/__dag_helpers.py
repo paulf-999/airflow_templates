@@ -4,6 +4,8 @@ from airflow.operators.python import get_current_context
 
 local_tz = pendulum.timezone("Australia/Melbourne")
 
+# task_owner = Variable.get("AIRFLOW_CTX_DAG_OWNER")
+
 
 def hello_world():
     """
@@ -15,6 +17,10 @@ def hello_world():
     """
 
     return "Hello world!"
+
+
+def print_execution_date(**kwargs):
+    print(f"TEST: {kwargs.get('ds')}")
 
 
 def gen_metadata(**kwargs):
@@ -39,28 +45,14 @@ def gen_metadata(**kwargs):
     print(f"task_id = {task_id}")
     print(f"run_id = {run_id}")
     print(f"job_id = {job_id}")
+    print(f"state = {state}")  # TBC if needed
     print(f"dag_run_start_date = {dag_run_start_date}")
     print("########################################")
 
     # return ",\n".join([f"{re.sub('[^a-zA-Z0-9]+','-',k)}={v}" for k, v in kwargs.items()])
 
 
-def get_context(**kwargs):
-    context = get_current_context()
-    payload = str(context["dag"])
-
-    print(f"context = {context}")
-
-    this_dag_id = re.sub("<DAG: |>", "", str(context["dag"]))
-
-    print(f"payload = {payload}")
-
-    return this_dag_id
-
-
-def trigger(context, dag_run_obj):
-    dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
-    return dag_run_obj
+# def get_dag_level_metadata():
 
 
 def get_datetime():
