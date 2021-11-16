@@ -18,10 +18,8 @@ import pendulum
 from time import time
 from airflow import DAG
 from airflow.utils.dates import days_ago
-from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")

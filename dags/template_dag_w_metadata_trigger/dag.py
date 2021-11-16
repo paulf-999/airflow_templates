@@ -26,8 +26,7 @@ from airflow.operators.python import get_current_context
 
 
 # TODOs
-# confirm if def trigger() is needed? I think it's redundant
-# 1) WIP - Fetch DAG metadata
+# 1) Done - Fetch DAG metadata
 # 2) Done - Create task groups
 # 3) Not started - Use task decorators
 # 4) Airflow templates & unit tests
