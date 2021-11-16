@@ -10,17 +10,16 @@ Note: boilerplate_dag is also timezone-aware (i.e., uses the python module 'pend
 
 ## Contents
 
-1. High-level summary
-    * Example DAGs
-2. How-to run
+* How-to run
     * Local Airflow install
     * Running Airflow locally, post-install
     * Scripted Airflow variable creation via CLI
     * Scripted Airflow connection creation via CLI
+* Example DAGs
 
 ---
 
-## 1. How-to run
+## How-to run
 
 ### Local Airflow install
 
