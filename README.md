@@ -43,7 +43,9 @@ To create an Airflow connection, add / change the entries listed in the Makefile
 
 As well as containing a `Makefile` to script the install of a local Airflow instance, the `Makefile` shows the commands to script the creation of Airflow variables anc connections.
 
-#### Example DAGs
+---
+
+### Example DAGs
 
 In addition, the repo contains 7 boilerplate Airflow DAGs, listed below:
 
