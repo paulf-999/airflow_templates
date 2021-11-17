@@ -1,6 +1,10 @@
 ## Airflow DAG Template - including step to fetch DAG metadata
 
-This diretory describes the template Airflow DAG file/folder structure, as well as conventions used.
+Note: for details on the Airflow dag used to retrieve dag runtime stats/metadata, see: [get_dag_runtime_stats](https://github.com/paulf-999/airflow_templates/tree/main/dags/get_dag_runtime_stats).
+
+---
+
+This directory describes the template Airflow DAG file/folder structure, as well as conventions used.
 
 Where the purpose of each of the files within the template are as follows:
 

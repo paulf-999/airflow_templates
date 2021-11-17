@@ -7,7 +7,7 @@ Template / reusable Airflow DAG used to capture Airflow DAG runtime statistics/m
 ## Contents
 
 * High-level summary
-* *How-to use
+* How-to use
 
 ---
 
@@ -17,8 +17,15 @@ This reusable Airflow dag is designed to be itself called by a 'parent' DAG, to 
 
 ## How-to use
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+In order to make use of this within your existing Airflow dags, you'll need to:
+
+1. Within your Airflow DAG, create a new Airflow task that uses the 'TriggerDagRunOperator'. This module can be imported using:
+`from airflow.operators.trigger_dagrun import TriggerDagRunOperator`
+2. In this new task, you'll need to pass in DAG configuration to specify the name of your 'source dag' (i.e., the dag you wish to retrieve runtime stats/metadata about). This is done by passing the following arg to the `TriggerDagRunOperator` task
+`conf={"source_dag": "template_dag_w_metadata_trigger"}`.
+
+### Example
+
+Shown below is an example of a new task you would create in your existing Airflow DAG, to invoke the 'get_dag_runtime_stats' dag:
+
+`trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "<your source dag name here>"})`
