@@ -1,4 +1,5 @@
 import logging
+from time import time
 from airflow.models import dagrun
 import pendulum
 import humanfriendly
@@ -146,3 +147,16 @@ def fmt_airflow_dt_vals(ip_dt_val, additional_fmting):
         fmted_dt_val = datetime.strptime(str(ip_dt_val.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
 
     return fmted_dt_val
+
+
+def get_runtime_stats_dict(**kwargs):
+    """read in sample op from subsequent step"""
+    START_TIME = time()
+    logger.debug("Function called: get_user_ips()")
+
+    ti = kwargs["ti"]
+    runtime_stats_dict = ti.xcom_pull(task_ids="get_dag_runtime_stats")
+
+    logger.debug(f"Function finished: read_op() finished in {round(time() - START_TIME, 2)} seconds")
+
+    return runtime_stats_dict
