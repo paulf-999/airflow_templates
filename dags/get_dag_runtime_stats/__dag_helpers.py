@@ -59,40 +59,63 @@ def get_dag_runtime_stats(**kwargs):
 
     dag_runs = DagRun.find(dag_id=src_dag_name)
 
+    # Python dictionary to store the runtime stats. Will capture both the DAG & Task-level stats
+    # This will need to be passed to a separate Airflow task
+    runtime_stats_dict = {}
+    runtime_stats_dict["dag_level_stats"] = {}
+    runtime_stats_dict["dag_task_level_stats"] = {}
+
     for dag_run in dag_runs:
         # get the dag_run details for the Airflow Dag that triggered this
         if dag_run.execution_date == last_dagrun_run_id:
             # cleanse the date fields to remove the timezone '+00' str
-            start_date = datetime.strptime(str(dag_run.start_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f")
-            end_date = datetime.strptime(str(dag_run.end_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f")
-            execution_date = datetime.strptime(str(dag_run.execution_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
+            start_date = fmt_airflow_dt_vals(dag_run.start_date, 0)
+            end_date = fmt_airflow_dt_vals(dag_run.end_date, 0)
+            execution_date = fmt_airflow_dt_vals(dag_run.execution_date, 1)
             duration = end_date - start_date
-            logger.info(f"dag_run = {dag_run}")
             # with dag_run retrieved, you can then fetch the fields below
+            runtime_stats_dict["dag_level_stats"]["dag_run"] = str(dag_run)
+            runtime_stats_dict["dag_level_stats"]["src_dag_name"] = src_dag_name
+            runtime_stats_dict["dag_level_stats"]["dag_run_state"] = dag_run.state
+            runtime_stats_dict["dag_level_stats"]["dag_run_execution_date"] = execution_date
+            runtime_stats_dict["dag_level_stats"]["dag_run_start_date"] = start_date.strftime("%Y-%m-%d %H:%M:%S")
+            runtime_stats_dict["dag_level_stats"]["dag_run_end_date"] = end_date.strftime("%Y-%m-%d %H:%M:%S")
+            runtime_stats_dict["dag_level_stats"]["dag_run_duration"] = humanfriendly.format_timespan(duration)
             logger.info("####################################################################")
             logger.info("DAG-level runtime metadata")
             logger.info("####################################################################")
-            logger.info(f"source dag name = {src_dag_name}")
-            logger.info(f"dag_run.state = {dag_run.state}")
-            logger.info(f"dag_run.execution_date = {execution_date}")
-            logger.info(f"dag_run.start_date = {start_date.strftime('%Y-%m-%d %H:%M:%S')}")
-            logger.info(f"dag_run.end_date = {end_date.strftime('%Y-%m-%d %H:%M:%S')}")
-            logger.info(f"dag_run.duration = {humanfriendly.format_timespan(duration)}")
+
+            # write out the dict contents to the terminal
+            for key, value in runtime_stats_dict.items():
+                if type(value) is dict and key == "dag_level_stats":
+                    for child_key, child_value in value.items():
+                        logger.info(f"{child_key} = {child_value}")
+
             logger.info("####################################################################")
             logger.info("TASK-level runtime metadata")
             logger.info("####################################################################")
+            # now retrieve the corresponding Airflow tasks & their metadata
             dag_run_tasks = dag_run.get_task_instances()
+
             for task in dag_run_tasks:
-                logger.info(f"dag_run_task = {task}")
-                logger.info(f"task.name = {task.task_id}")
-                logger.info(f"task.state = {task.state}")
-                task_execution_date = datetime.strptime(str(task.execution_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
-                task_start_date = datetime.strptime(str(task.start_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
-                task_end_date = datetime.strptime(str(task.end_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"task.execution_date = {task_execution_date}")
-                logger.info(f"task.start_date = {task_start_date}")
-                logger.info(f"task.end_date = {task_end_date}")
-                logger.info(f"task.duration = {humanfriendly.format_timespan(task.duration)}")
+                task_execution_date = fmt_airflow_dt_vals(task.execution_date, 1)
+                task_start_date = fmt_airflow_dt_vals(task.start_date, 1)
+                task_end_date = fmt_airflow_dt_vals(task.end_date, 1)
+
+                runtime_stats_dict["dag_task_level_stats"]["dag_run_task"] = str(task)
+                runtime_stats_dict["dag_task_level_stats"]["task_name"] = task.task_id
+                runtime_stats_dict["dag_task_level_stats"]["task_state"] = task.state
+                runtime_stats_dict["dag_task_level_stats"]["task_execution_date"] = task_execution_date
+                runtime_stats_dict["dag_task_level_stats"]["task_start_date"] = task_start_date
+                runtime_stats_dict["dag_task_level_stats"]["task_end_date"] = task_end_date
+                runtime_stats_dict["dag_task_level_stats"]["task_duration"] = humanfriendly.format_timespan(task.duration)
+
+                # write out the dict contents to the terminal
+                for key, value in runtime_stats_dict.items():
+                    if type(value) is dict and key == "dag_task_level_stats":
+                        for child_key, child_value in value.items():
+                            logger.info(f"{child_key} = {child_value}")
+
                 logger.info("###########################################")
         else:
             logger.debug("dag_run details not found!")
@@ -100,4 +123,26 @@ def get_dag_runtime_stats(**kwargs):
             logger.debug(f"dag_run.execution_date = {dag_run.execution_date}")
             logger.debug(f"last_dagrun_run_id = {last_dagrun_run_id}")
 
-    return
+    return runtime_stats_dict
+
+
+def fmt_airflow_dt_vals(ip_dt_val, additional_fmting):
+    """
+    Summary: the same date formatting is used repeatedly, thus this function has been created to improve readability.
+
+    Args:
+        ip_dt_val (string): Input date/time value, requiring formatting
+        additional_fmting (boolean): Flag used to indicate whether additional formatting is desired to create the more 'user friendly' dt data type
+
+    Returns:
+        fmted_dt_val (string): Formatted date/time value
+    """
+
+    if additional_fmting == 0:
+        # less user-friendly date format (includes milliseconds), though it's required for calculating duration
+        fmted_dt_val = datetime.strptime(str(ip_dt_val.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f")
+    elif additional_fmting == 1:
+        # for a more user-friendly date format, set this value to 1
+        fmted_dt_val = datetime.strptime(str(ip_dt_val.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
+
+    return fmted_dt_val
