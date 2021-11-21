@@ -33,8 +33,8 @@ deps:
 	@pyenv install 3.7.10
 	@pyenv local 3.7.10
 	@pip install airflow-dbt
-	@pip3 install snowflake-connector-python
-	@pip3 install snowflake-sqlalchemy
+	@pip install snowflake-connector-python
+	@pip install snowflake-sqlalchemy
 	@brew install jq
 	# note: ensure you add pyenv to your path file. Run `pyenv init` for instructions
 
@@ -48,6 +48,8 @@ install:
 	@#pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
 	@#pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
 	@#pip install apache-airflow-providers-snowflake --constraint "${CONSTRAINT_URL}"
+	@pip install snowflake-connector-python
+	@pip install snowflake-sqlalchemy
 	# call routine to create the admin user
 	@make create_admin_user
 	# copy over additional config to be used to capture task runtime stats
