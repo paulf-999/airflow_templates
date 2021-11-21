@@ -150,7 +150,12 @@ def fmt_airflow_dt_vals(ip_dt_val, additional_fmting):
 
 
 def get_runtime_stats_dict(**kwargs):
-    """read in sample op from subsequent step"""
+    """
+    Summary: read in runtime stats from dict obj in previous task
+
+    Returns:
+        Python dict: Stores the runtime metadata of the Airflow DAG
+    """
     START_TIME = time()
     logger.debug("Function called: get_user_ips()")
 

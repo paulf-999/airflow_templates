@@ -1,9 +1,9 @@
 SHELL = /bin/sh
 
 # note, you'll need to start the scheduler (using 'make start_scheduler') in a separate shell
-all: installations init_airflow_db
+all: installations init_airflow_db create_admin_user
 
-config_file=config.json
+config_file=envvars.json
 ########################################
 # fetch inputs from config (json) file
 ########################################
@@ -45,13 +45,13 @@ install:
 	# the 2 below are for any db-related operations
 	@#pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
 	@#pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
+	@#pip install apache-airflow-providers-snowflake --constraint "${CONSTRAINT_URL}"
 	# call routine to create the admin user
 	@make create_admin_user
 	# copy over additional config to be used to capture task runtime stats
 	# first you need to remove the quotes from the var
 	@$(eval AIRFLOW_HOME_DIR := $(subst $\",,$(AIRFLOW_HOME_DIR)))
-	@mkdir ${target_dir}
-	@cp notes/airflow_local_settings.py ${AIRFLOW_HOME_DIR}config2/
+	@cp notes/airflow_local_settings.py ${AIRFLOW_HOME_DIR}config/
 
 .PHONY: clean
 clean:
@@ -59,7 +59,7 @@ clean:
 
 init_airflow_db:
 	$(info [+] Initialize the airflow db)
-	@airflow db upgrade
+	@airflow db init
 
 create_admin_user:
 	$(info [+] Create an admin user for Airflow)
@@ -99,6 +99,12 @@ create_airflow_connections:
 create_aws_connection:
 	$(info [+] Create an Airflow AWS connection)
 	@airflow connections add aws_conn --conn-type aws --conn-login ${AWS_ACCESS_KEY} --conn-password ${AWS_SECRET_ACCESS_KEY}
+
+create_sf_connection:
+	$(info [+] Create a Snowflake connection)
+	#--account ${sf_acc_name_dbt_demo}
+	#airflow connections add snowflake_conn_eg --conn-type snowflake --conn-account ${sf_acc_name_dbt_demo} --conn-host localhost --conn-login ${sf_username_dbt_demo} --conn-password ${sf_pass_dbt_demo}
+	airflow connections add test --conn-type snowflake --conn-host 'sb83418.ap-southeast-2.snowflakecomputing.com' --conn-port 443 --conn-login ${sf_username_dbt_demo} --conn-password ${sf_pass_dbt_demo}
 
 trigger_dag:
 	$(info [+] Trigger an Airflow DAG)
