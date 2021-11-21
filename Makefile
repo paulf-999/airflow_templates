@@ -27,13 +27,15 @@ installations: deps install clean
 .PHONY: deps
 deps:
 	$(info [+] Download the relevant dependencies)
-	@pip3 install airflow-dbt
-	@brew install jq
 	# airflow works a lot better with Python3.7 at the moment (compared to 3.8)
 	# as such, set up your local Python version to use 3.7
 	@brew install pyenv
 	@pyenv install 3.7.10
 	@pyenv local 3.7.10
+	@pip install airflow-dbt
+	@pip3 install snowflake-connector-python
+	@pip3 install snowflake-sqlalchemy
+	@brew install jq
 	# note: ensure you add pyenv to your path file. Run `pyenv init` for instructions
 
 .PHONY: install

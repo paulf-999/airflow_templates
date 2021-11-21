@@ -1,7 +1,7 @@
 {
     "airflow_args": {
-        "airflow_version": "2.2.2",
-        "python_version": "3.8",
+        "airflow_version": "2.2.1",
+        "python_version": "3.7",
         "constraints_url": "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
     },
     "sample_db_creds": {
