@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
 Python Version  : 3.7
-* Name          : template_dag.py
+* Name          : get_dag_runtime_stats.py
 * Description   : Boilerplate Airflow DAG script.
 * Created       : 11-06-2021
-* Usage         : python3 template_dag.py
 """
 
 __author__ = "Paul Fry"
@@ -39,7 +38,6 @@ helpers = importlib.import_module(".__dag_helpers", package=dagname)
 queries = importlib.import_module(".__sql_queries", package=dagname)
 
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
-
 
 with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template", "metadata"]) as dag:
 
