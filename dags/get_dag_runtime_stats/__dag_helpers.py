@@ -11,6 +11,9 @@ from airflow.models.dagrun import DagRun
 from airflow.contrib.operators.snowflake_operator import SnowflakeOperator
 import snowflake.connector
 
+# TODO
+# add routine to also update 'AIRFLOW_DAG' table, for 'last_schedule_run' and 'next_schedule_run'
+
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("airflow.task")
@@ -126,7 +129,7 @@ def get_dag_runtime_stats(**kwargs):
 
                             # Insert the data into the Snowflake table!
                             cs.execute(
-                                f"INSERT INTO {sf_db}.{sf_schema}.airflow_etl_control_tbl (DAG_NAME, DAG_RUN, DAG_RUN_STATE, DAG_RUN_START_DATE, DAG_RUN_END_DATE, DAG_RUN_DURATION, DAG_RUN_TASK_NAME, DAG_RUN_TASK_STATE, DAG_RUN_TASK_START_DATE, DAG_RUN_TASK_END_DATE, DAG_RUN_TASK_DURATION, QUERY_TS) VALUES ('{runtime_stats_dict['dag_level_stats']['dag_name']}', '{runtime_stats_dict['dag_level_stats']['dag_run']}', '{runtime_stats_dict['dag_level_stats']['dag_run_state']}', '{runtime_stats_dict['dag_level_stats']['dag_run_start_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_end_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_duration']}','{runtime_stats_dict['dag_task_level_stats']['task_name']}', '{runtime_stats_dict['dag_task_level_stats']['task_state']}', '{runtime_stats_dict['dag_task_level_stats']['task_start_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_end_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_duration']}', current_timestamp());"
+                                f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG_RUN (DAG_NAME, DAG_RUN, DAG_RUN_STATE, DAG_RUN_START_DATE, DAG_RUN_END_DATE, DAG_RUN_DURATION, DAG_RUN_TASK_NAME, DAG_RUN_TASK_STATE, DAG_RUN_TASK_START_DATE, DAG_RUN_TASK_END_DATE, DAG_RUN_TASK_DURATION, QUERY_TS) VALUES ('{runtime_stats_dict['dag_level_stats']['dag_name']}', '{runtime_stats_dict['dag_level_stats']['dag_run']}', '{runtime_stats_dict['dag_level_stats']['dag_run_state']}', '{runtime_stats_dict['dag_level_stats']['dag_run_start_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_end_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_duration']}','{runtime_stats_dict['dag_task_level_stats']['task_name']}', '{runtime_stats_dict['dag_task_level_stats']['task_state']}', '{runtime_stats_dict['dag_task_level_stats']['task_start_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_end_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_duration']}', current_timestamp());"
                             )
 
                 logger.info("###########################################")
