@@ -50,7 +50,7 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
-with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dagname, default_args=default_args, schedule_interval="30 19 * * Fri", tags=["template"]) as dag:
 
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)
@@ -58,7 +58,9 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
 
     example_task = PythonOperator(task_id="example_task", python_callable=helpers.hello_world, provide_context=True)
 
-    trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "template_dag_w_metadata_trigger"})
+    trigger_get_dag_metadata_dag = TriggerDagRunOperator(
+        task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "template_dag_w_metadata_trigger", "target_tbl": "eg_target_tbl"}
+    )
 
     # in future, 'trigger_run_id' is likely to be a new param (MR is approved, but awaiting suite of unit test runs to complete)
     # trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", trigger_run_id="template_dag_w_metadata_trigger")

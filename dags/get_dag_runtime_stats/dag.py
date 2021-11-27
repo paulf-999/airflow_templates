@@ -46,9 +46,7 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
 
     get_dag_runtime_stats = PythonOperator(task_id="get_dag_runtime_stats", python_callable=helpers.get_dag_runtime_stats, provide_context=True)
 
-    write_runtime_stats_to_sf = PythonOperator(task_id="write_runtime_stats_to_sf", python_callable=helpers.get_runtime_stats_dict, provide_context=True)
-
     end_task = DummyOperator(task_id="end", dag=dag)
 
 # graph
-start_task >> get_dag_runtime_stats >> write_runtime_stats_to_sf >> end_task
+start_task >> get_dag_runtime_stats >> end_task
