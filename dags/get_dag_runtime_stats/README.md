@@ -28,4 +28,4 @@ In order to make use of this within your existing Airflow dags, you'll need to:
 
 Shown below is an example of a new task you would create in your existing Airflow DAG, to invoke the 'get_dag_runtime_stats' dag:
 
-`trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "<your source dag name here>"})`
+`trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="get_dag_runtime_stats", conf={"source_dag": "<source dag name here>", "target_tbl": "<target table name here>"}`
