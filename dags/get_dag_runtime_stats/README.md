@@ -22,7 +22,7 @@ In order to make use of this within your existing Airflow dags, you'll need to:
 1. Within your Airflow DAG, create a new Airflow task that uses the 'TriggerDagRunOperator'. This module can be imported using:
 `from airflow.operators.trigger_dagrun import TriggerDagRunOperator`
 2. In this new task, you'll need to pass in DAG configuration to specify the name of your 'source dag' (i.e., the dag you wish to retrieve runtime stats/metadata about). This is done by passing the following arg to the `TriggerDagRunOperator` task
-`conf={"source_dag": "template_dag_w_metadata_trigger"}`.
+`conf={"source_dag": "<source dag name here>", "target_tbl": "<target table name here>"}`.
 
 ### Example
 
