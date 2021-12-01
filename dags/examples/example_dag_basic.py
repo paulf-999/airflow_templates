@@ -39,6 +39,8 @@ with DAG(dag_id=os.path.basename(__file__).replace(".py", ""), default_args=defa
 
     start_task = DummyOperator(task_id="start", dag=dag)
 
-    read_op_in_sub_tsk = PythonOperator(task_id="eg_task", python_callable=hello_world, provide_context=True)
+    example_task = PythonOperator(task_id="example_task", python_callable=hello_world, provide_context=True)
 
     end_task = DummyOperator(task_id="end", dag=dag)
+
+start_task >> example_task >> end_task

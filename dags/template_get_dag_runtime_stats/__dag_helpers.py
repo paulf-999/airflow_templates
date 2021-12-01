@@ -41,7 +41,7 @@ conn = snowflake.connector.connect(
 
 
 def get_airflow_endpoints_and_ips_for_dag_runtime_stats():
-    """Summary: Housekeeping function used to setup the required Airflow endpoints and setup the inputs required for the function 'get_dag_runtime_stats'
+    """Summary: Housekeeping function used to setup the required Airflow endpoints and setup the inputs required for the function 'template_get_dag_runtime_stats'
 
     Returns:
         src_dag_name: the name of the 'source' Airflow DAG, that triggered this 'get_dag_metadata_runtime_stats' dag
@@ -111,7 +111,7 @@ def get_dag_runtime_stats(**kwargs):
         # get the dag_run details for the Airflow Dag that triggered this
         if dag_run.execution_date == last_dagrun_run_id.execution_date:
 
-            # update the DAG metadata in snowflake (i.e. 'last_run' and 'next_run')
+            # update the DAG metadata in snowflake (i.e. the 'last_run' and 'next_run' values)
             cs.execute(
                 f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG (DAG_NAME, TARGET_TBL, DAG_SCHEDULE, LAST_DAG_RUN, NEXT_DAG_RUN, QUERY_TS) VALUES ('{runtime_stats_dict['dag']['dag_name']}', '{runtime_stats_dict['dag']['target_tbl']}', '{runtime_stats_dict['dag']['schedule_interval']}', '{runtime_stats_dict['dag']['last_dag_run']}', '{runtime_stats_dict['dag']['next_dag_run']}', current_timestamp());"
             )
@@ -181,37 +181,3 @@ def fmt_airflow_dt_vals(ip_dt_val):
     """
 
     return datetime.strptime(str(ip_dt_val.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d %H:%M:%S")
-
-
-def get_runtime_stats_dict(**kwargs):
-    """
-    Summary: read in runtime stats from dict obj in previous task
-
-    Returns: Python dict: Stores the runtime metadata of the Airflow DAG
-    """
-    START_TIME = time()
-    logger.debug("Function called: get_user_ips()")
-
-    ti = kwargs["ti"]
-    runtime_stats_dict = ti.xcom_pull(task_ids="get_dag_runtime_stats")
-
-    print(f"runtime_stats_dict = {runtime_stats_dict}")
-
-    """
-    for key, value in runtime_stats_dict.items():
-        if type(value) is dict and key == "dag_level_stats":
-            for child_key, child_value in value.items():
-                logger.info(f"{child_key} = {child_value}")
-
-                cs = conn.cursor()
-                try:
-                    cs.execute(f"INSERT INTO {sf_db}.${sf_schema}.airflow_etl_control_tbl () ")
-                    one_row = cs.fetchone()
-                    print(one_row[0])
-                finally:
-                    cs.close()
-                conn.close()
-    """
-    logger.debug(f"Function finished: read_op() finished in {round(time() - START_TIME, 2)} seconds")
-
-    return runtime_stats_dict
