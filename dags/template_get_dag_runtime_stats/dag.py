@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Python Version  : 3.7
-* Name          : template_get_dag_runtime_stats.py
-* Description   : Boilerplate Airflow DAG script.
+* Name          : template_dag_get_runtime_stats.py
+* Description   : Reusable Airflow DAG used to capture Airflow DAG runtime statistics/metadata at both the DAG and DAG-task level.
 * Created       : 11-06-2021
 """
 
@@ -44,7 +44,7 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)
 
-    get_dag_runtime_stats = PythonOperator(task_id="template_get_dag_runtime_stats", python_callable=helpers.template_get_dag_runtime_stats, provide_context=True)
+    get_dag_runtime_stats = PythonOperator(task_id="template_dag_get_runtime_stats", python_callable=helpers.template_dag_get_runtime_stats, provide_context=True)
 
     end_task = DummyOperator(task_id="end", dag=dag)
 

@@ -41,7 +41,7 @@ conn = snowflake.connector.connect(
 
 
 def get_airflow_endpoints_and_ips_for_dag_runtime_stats():
-    """Summary: Housekeeping function used to setup the required Airflow endpoints and setup the inputs required for the function 'template_get_dag_runtime_stats'
+    """Summary: Housekeeping function used to setup the required Airflow endpoints and setup the inputs required for the function 'template_dag_get_runtime_stats'
 
     Returns:
         src_dag_name: the name of the 'source' Airflow DAG, that triggered this 'get_dag_metadata_runtime_stats' dag
