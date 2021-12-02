@@ -4,7 +4,7 @@ Simple instructions for a local install of Airflow (see the `Makefile`).
 
 To create a local install of Airflow containing the prerequisite files, run `make`!
 
-Note: boilerplate_dag is also timezone-aware (i.e., uses the python module 'pendulum').
+Note: `template_dag` is also timezone-aware (i.e., uses the python module `pendulum`).
 
 ---
 
@@ -46,17 +46,15 @@ As well as containing a `Makefile` to script the install of a local Airflow inst
 
 ### Example DAGs
 
-In addition, the repo contains 7 boilerplate Airflow DAGs, listed below:
+In addition, the repo contains a number of example & template Airflow DAGs, listed below:
 
 | DAG | Description                  |
 | -------| -----------------------------|
 | template_dag | Stripped back boilerplate/starting point to use for building a DAG. Makes use of pendulum, to make DAGs timezone-aware. |
-| template_slack_post.py | Cut back example showing the syntax needed to write to Slack from Airflow. |
-| template_task_failure_post_to_slack.py | Extends the above example, to instead post to Slack upon any task failing within an Airflow DAG. |
-| template_mssql_query.py | Demonstrates the syntax needed to perform an MSSQL query. |
-| template_eg_xcom_pull.py | Example of using XCom to retrieve the output of previous Airflow tasks. |
-| template_dms_task_dag.py | Integrates with AWS DMS to check and invoke a DMS job. |
-| template_dbt_dag.py | Integrates with DBT to run a DBT test, then DBT run command. |
+| template_dag_w_get_metadata_trigger | Same as `template_dag`, except there's added functionality to trigger a separate DAG to get Airflow runtime metadata |
+| template_get_dag_runtime_stats | Reusable Airflow DAG used to capture Airflow DAG runtime statistics/metadata at both the DAG and DAG-task level. |
+| examples/ | Further example DAGs, e.g., showing `task_group` usage, showing how to trigger another DAG from within a DAG etc. |
+| more_templates/ | Templated examples, e.g. templated snowflake operator, templated slack post, templated dbt calls etc. |
 
 These make use of automated (scripted CLI commands) variable and connection creation.
 
