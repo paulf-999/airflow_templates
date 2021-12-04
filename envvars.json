@@ -2,7 +2,8 @@
     "airflow_args": {
         "airflow_version": "2.0.1",
         "python_version": "3.7",
-        "constraints_url": "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+        "constraints_url": "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt",
+        "airflow_home_dir": "~/airflow/"
     },
     "sample_db_creds": {
         "host": "${MY_HOST}",
@@ -13,7 +14,6 @@
         "ip_tbl_list": "${MY_IP_TBLS}"
     },
     "other": {
-        "slack_token": "${MY_SLACK_TOKEN}",
-        "airflow_home_dir": "~/airflow/"
+        "slack_token": "${MY_SLACK_TOKEN}"
     }
 }
