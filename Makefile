@@ -1,6 +1,5 @@
 SHELL = /bin/sh
 
-# note, you'll need to start the scheduler (using `make start_scheduler`) & webserver (using `make start_webserve`) in separate shells
 all: installations init_airflow_db create_admin_user
 
 CONFIG_FILE=envvars.json
@@ -31,17 +30,26 @@ deps:
 install:
 	$(info [+] Install any required python / airflow libraries)
 	# Uncomment if required
-	#@pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"
-	#@pip install apache-airflow-providers-slack --constraint "${CONSTRAINT_URL}"
+	@pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"
+	@pip install apache-airflow-providers-slack --constraint "${CONSTRAINT_URL}"
 	@pip install apache-airflow-providers-snowflake --constraint "${CONSTRAINT_URL}"
 	@pip install snowflake-connector-python --constraint "${CONSTRAINT_URL}"
 	@pip install airflow-dbt --constraint "${CONSTRAINT_URL}"
+	@pip install humanfriendly
 	# set AIRFLOW_HOME var
 	@$(eval AIRFLOW_HOME := $(subst $\",,$(AIRFLOW_HOME_DIR)))
-	# Call routine to create the admin user
-	@make create_admin_user
 	# Initialize the airflow db
 	@make init_airflow_db
+	# copy over the predefined airflow config
+	cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
+	# Create the admin user
+	@make create_admin_user
+	@make start_scheduler
+	@make start_webserver
+
+test:
+	@$(eval AIRFLOW_HOME := $(subst $\",,$(AIRFLOW_HOME_DIR)))
+	cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
 
 .PHONY: clean
 clean:
@@ -51,6 +59,10 @@ clean:
 # Airflow-specific targets
 #############################################################################################
 # The two targets below are called by the above install target
+init_airflow_db:
+	$(info [+] Initialize the airflow db)
+	@airflow db init
+
 create_admin_user:
 	$(info [+] Create an admin user for Airflow)
 	@airflow users create \
@@ -60,19 +72,15 @@ create_admin_user:
 		--role Admin \
 		--email spiderman@superhero.org
 
-init_airflow_db:
-	$(info [+] Initialize the airflow db)
-	@airflow db init
-
 # Note: you'll need to start the scheduler (using `make start_scheduler`) & webserver (using `make start_webserve`) in separate shells
 start_scheduler:
 	$(info [+] Start the scheduler)
 	# open a new terminal or else run webserver with ``-D`` option to run it as a daemon
-	@airflow scheduler
+	@airflow scheduler -D
 
 start_webserver:
 	$(info [+] Start the web server, default port is 8080)
-	@airflow webserver --port 8080
+	@airflow webserver --port 8080 -D
 	# visit localhost:8080 in the browser and use the admin account just created to login
 
 #############################################################################################
