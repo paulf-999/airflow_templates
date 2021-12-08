@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-all: installations init_airflow_db create_admin_user
+all: installations
 
 CONFIG_FILE=envvars.json
 ########################################
@@ -11,6 +11,15 @@ $(eval AIRFLOW_VERSION=$(shell jq '.airflow_args.airflow_version' ${CONFIG_FILE}
 $(eval PYTHON_VERSION=$(shell jq '.airflow_args.python_version' ${CONFIG_FILE}))
 $(eval CONSTRAINT_URL=$(shell jq '.airflow_args.constraints_url' ${CONFIG_FILE}))
 $(eval AIRFLOW_HOME_DIR=$(shell jq '.airflow_args.airflow_home_dir' ${CONFIG_FILE}))
+# sample db cred args
+$(eval HOST=$(shell jq '.sample_db_creds.host' ${CONFIG_FILE}))
+$(eval USERNAME=$(shell jq '.sample_db_creds.username' ${CONFIG_FILE}))
+$(eval PWD=$(shell jq '.sample_db_creds.password' ${CONFIG_FILE}))
+$(eval DB_NAME=$(shell jq '.sample_db_creds.db_name' ${CONFIG_FILE}))
+$(eval DB_SCHEMA=$(shell jq '.sample_db_creds.db_schema' ${CONFIG_FILE}))
+$(eval IP_TBLS=$(shell jq '.sample_db_creds.ip_tbl_list' ${CONFIG_FILE}))
+# other
+$(eval SLACK_TOKEN=$(shell jq '.other.slack_token' ${CONFIG_FILE}))
 
 installations: deps install clean
 
@@ -29,27 +38,27 @@ deps:
 .PHONY: install
 install:
 	$(info [+] Install any required python / airflow libraries)
-	# Uncomment if required
 	@pip install apache-airflow-providers-amazon --constraint "${CONSTRAINT_URL}"
 	@pip install apache-airflow-providers-slack --constraint "${CONSTRAINT_URL}"
 	@pip install apache-airflow-providers-snowflake --constraint "${CONSTRAINT_URL}"
 	@pip install snowflake-connector-python --constraint "${CONSTRAINT_URL}"
+	# the 2 below are for any db-related operations
+	@pip install apache-airflow-providers-odbc --constraint "${CONSTRAINT_URL}"
+	@pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
 	@pip install airflow-dbt --constraint "${CONSTRAINT_URL}"
 	@pip install humanfriendly
-	# set AIRFLOW_HOME var
-	@$(eval AIRFLOW_HOME := $(subst $\",,$(AIRFLOW_HOME_DIR)))
+	@pip install pyarrow
 	# Initialize the airflow db
 	@make init_airflow_db
 	# copy over the predefined airflow config
 	cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
 	# Create the admin user
 	@make create_admin_user
+	# Create variables needed for demo dags
+	@make create_airflow_variables
+	# start the airflow scheduler & webserver
 	@make start_scheduler
 	@make start_webserver
-
-test:
-	@$(eval AIRFLOW_HOME := $(subst $\",,$(AIRFLOW_HOME_DIR)))
-	cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
 
 .PHONY: clean
 clean:
@@ -101,6 +110,18 @@ create_sf_connection:
 	airflow connections add snowflake_conn_eg --conn-type snowflake --conn-host 'sb83418.ap-southeast-2.snowflakecomputing.com' --conn-port 443 --conn-login ${sf_username_dbt_demo} --conn-password ${sf_pass_dbt_demo}
 	#airflow connections add snowflake_conn_eg --conn-type snowflake --conn-host 'ocsp.snowflakecomputing.com:80' --conn-port 443 --conn-login ${sf_username_dbt_demo} --conn-password ${sf_pass_dbt_demo}
 
+create_airflow_variables:
+	$(info [+] Create some (example) Airflow variables)
+	@airflow variables set host ${HOST}
+	@airflow variables set username ${USERNAME}
+	@airflow variables set password ${PWD}
+	@airflow variables set db_name ${DB_NAME}
+	@airflow variables set db_schema ${DB_SCHEMA}
+	@airflow variables set ip_tbl_list ${IP_TBLS}
+	@airflow variables set slack_token ${SLACK_TOKEN}
+	@airflow variables set AWS_ACCESS_KEY ${AWS_ACCESS_KEY}
+	@airflow variables set AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
+
 trigger_dag:
 	$(info [+] Trigger an Airflow DAG)
 	@airflow dags trigger dbt_dag
@@ -112,3 +133,7 @@ trigger_dag_w_ip:
 debug:
 	# use this if you need to reinstall airflow
 	rm ~/airflow/airflow.db
+
+kill_af_scheduler_and_webserver:
+	cat ~/airflow/airflow-scheduler.pid | xargs kill
+	cat ~/airflow/airflow-webserver.pid | xargs kill
