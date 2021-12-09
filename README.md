@@ -44,7 +44,7 @@ As well as containing a `Makefile` to script the install of a local Airflow inst
 
 ---
 
-### Example DAGs
+## Example and Template DAGs
 
 In addition, the repo contains a number of example & template Airflow DAGs, listed below:
 
@@ -57,6 +57,27 @@ In addition, the repo contains a number of example & template Airflow DAGs, list
 | more_templates/ | Templated examples, e.g.:<br/>* A templated snowflake operator<br/>* Templated slack post usage<br/>* Templated dbt calls etc. |
 
 These make use of automated (scripted CLI commands) variable and connection creation.
+
+---
+
+## Airflow config `airflow.cfg`
+
+Some of the Airflow config changes that have been applied include:
+
+Note: Many of these changes have been applied/come from [this Medium.com blog post](https://medium.com/@agordienko/apache-airflow-cheatsheet-205f82d6edda).
+
+| Config change | Config section | Description                  |
+| -------| -----------------------------|
+| dags_folder | core | To obviously point to the correct DAGs folder! |
+| default_timezone | core | To use the local/desired timezone, as opposed to UTC |
+| load_examples | core | This is set to `False` to prevent loading the examples |
+| auth_backend | api | For local dev purposes, this is set to basic_auth. This allows API calls to be made without needing to generate tokens |
+| default_ui_timezone | webserver | Similar to the 2nd point, this ensures the time used on the UI uses this timezone rather than UTC time |
+| dag_default_view | webserver | I use the graph! Saves an extra click |
+| min_file_process_interval | scheduler | Reduce the number of seconds Airflow waits to look for DAG changes. I set this to 5 for local dev work |
+| dag_dir_list_interval | scheduler | Same as the above, I set this to 5 for the same reason. |
+| catchup_by_default | scheduler | This value is set to `True` by default.  It means each time you unpause the DAG all the missed dagruns will start immediately. |
+| hide_sensitive_variable_fields | admin | This is set to `True` to hide values from some variables. |
 
 ---
 
