@@ -2,6 +2,9 @@ SHELL = /bin/sh
 
 all: installations
 
+export adm_pass=${sf_pass_dbt_demo}
+export user_demo_pass=${user_demo}
+
 CONFIG_FILE=envvars.json
 ########################################
 # fetch inputs from config (json) file
@@ -54,6 +57,9 @@ install:
 	cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
 	# Create the admin user
 	@make create_admin_user
+	# create example 'read-only' and 'creator' users
+	@make create_ro_user_example
+	@make create_creator_user_example
 	# Create variables needed for demo dags
 	@make create_airflow_variables
 	# start the airflow scheduler & webserver
@@ -76,12 +82,32 @@ create_admin_user:
 	$(info [+] Create an admin user for Airflow)
 	@airflow users create \
 		--username pfry \
+		--password ${adm_pass} \
 		--firstname Peter \
 		--lastname Parker \
 		--role Admin \
 		--email spiderman@superhero.org
 
-# Note: you'll need to start the scheduler (using `make start_scheduler`) & webserver (using `make start_webserve`) in separate shells
+create_ro_user_example:
+	$(info [+] Create user & assign them the 'user' role in Airflow)
+	@airflow users create \
+		--username read_only_demo \
+		--password ${user_demo_pass} \
+		--firstname read_only_demo \
+		--lastname read_only_demo \
+		--role Viewer \
+		--email read_only_demo@test.com
+
+create_creator_user_example:
+	$(info [+] Create user & assign them the 'user' role in Airflow)
+	@airflow users create \
+		--username creator_demo \
+		--password ${user_demo_pass} \
+		--firstname creator_demo \
+		--lastname creator_demo \
+		--role User \
+		--email creator_demo@test.com
+
 start_scheduler:
 	$(info [+] Start the scheduler)
 	# open a new terminal or else run webserver with ``-D`` option to run it as a daemon
@@ -132,8 +158,60 @@ trigger_dag_w_ip:
 
 debug:
 	# use this if you need to reinstall airflow
-	rm ~/airflow/airflow.db
+	rm -r ~/airflow/
+	# rm ~/airflow/airflow.db
 
 kill_af_scheduler_and_webserver:
 	cat ~/airflow/airflow-scheduler.pid | xargs kill
 	cat ~/airflow/airflow-webserver.pid | xargs kill
+
+#############################################################################################
+# add user to role
+#############################################################################################
+create_ro_user:
+	$(info [+] Create user & assign them the 'user' role in Airflow)
+	@airflow users create \
+		--username read_only_demo \
+		--password ${user_demo_pass} \
+		--firstname read_only_demo \
+		--lastname read_only_demo \
+		--role Viewer \
+		--email read_only_demo@test.com
+
+create_creator_user:
+	$(info [+] Create user & assign them the 'user' role in Airflow)
+	@airflow users create \
+		--username creator_demo \
+		--password ${user_demo_pass} \
+		--firstname creator_demo \
+		--lastname creator_demo \
+		--role User \
+		--email creator_demo@test.com
+
+create_role:
+	curl -X POST http://localhost:8080/api/v1/roles \
+	-H "Content-Type: application/json" \
+	--user "pfry:${adm_pass}" \
+	-d "{\"name\":\"read_only_role\", \"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"DAGs\"}}]}"
+
+add_user_to_role:
+	airflow users add-role -u pfry -r read_only_role
+
+#############################################################################################
+# my tests
+#############################################################################################
+test:
+	curl -X POST http://localhost:8080/api/v1/roles \
+	-H "Content-Type: application/json" \
+	--user "pfry:${adm_pass}" \
+	-d "{\"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"Website\"}},{\"action\":{\"name\":\"can_edit\"},\"resource\":{\"name\":\"DAG:tutorial\"}},{\"action\":{\"name\":\"can_create\"},\"resource\":{\"name\":\"Task Instances\"}}],\"name\":\"new_custom_role\"}"
+
+test2:
+	curl -X POST "http://localhost:8080/api/v1/roles" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"Website\"}},{\"action\":{\"name\":\"can_edit\"},\"resource\":{\"name\":\"DAG:tutorial\"}},{\"action\":{\"name\":\"can_create\"},\"resource\":{\"name\":\"Task Instances\"}}],\"name\":\"new_custom_role\"}"
+
+test3:
+	curl -X PATCH -d '{"is_paused": true}' 'http://localhost:8080/api/v1/dags/example_dag?update_mask=is_paused' -H 'content-type: application/json' --user "pfry:${adm_pass}"
+
+test4:
+	python3 airflow_create_rbac_role.py -u http://localhost:8080 -r airflow_creator -d example_dag
+
