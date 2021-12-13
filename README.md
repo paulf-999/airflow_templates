@@ -25,13 +25,6 @@ Note: `template_dag` is also timezone-aware (i.e., uses the python module `pendu
 
 To create a local install of Airflow containing the prerequisite files, run `make`!
 
-### Running Airflow locally, post-install
-
-To subsequently run Airflow (post-install), do the following:
-
-* In a terminal window, navigate to the Git repo root and enter `make start_webserver`
-* In another terminal window, navigate to the Git repo root and enter `make start_scheduler`
-
 ### Scripted Airflow variable creation via CLI
 
 To create an Airflow variable, add / change the entries listed in the Makefile recipe `create_airflow_variables`
