@@ -1,6 +1,6 @@
 Refer to `test` target in `Makefile`.
 
 The name of the dag needs to be passed as an input to the file
-# Design notes
+### Design notes
 
-1) Need to capture the name of the dag being updated & pass it in as an input
+* Need to capture the name of the dag being updated & pass it in as an input

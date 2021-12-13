@@ -66,7 +66,7 @@ Note: Many of these changes have been applied/come from [this Medium.com blog po
 | dags_folder | core | To obviously point to the correct DAGs folder! |
 | default_timezone | core | To use the local/desired timezone, as opposed to UTC |
 | load_examples | core | This is set to `False` to prevent loading the examples |
-| colored_console_log | logging | This is set to `False`, to help resolve some Airflow logging errors produced |
+| colored_console_log | logging | This is set to `False` to help resolve some Airflow logging errors produced |
 | auth_backend | api | For local dev purposes, this is set to basic_auth. This allows API calls to be made without needing to generate tokens |
 | default_ui_timezone | webserver | Similar to the 2nd point, this ensures the time used on the UI uses this timezone rather than UTC time |
 | dag_default_view | webserver | I use the graph! Saves an extra click |
