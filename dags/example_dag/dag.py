@@ -29,7 +29,8 @@ from airflow.operators.python import get_current_context
 # 1) Done - Fetch DAG metadata
 # 2) Done - Create task groups
 # 3) Not started - Use task decorators
-# 4) Airflow templates & unit tests
+# 4) Airflow unit tests - WIP
+# 5) Airflow templates
 
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
@@ -61,8 +62,6 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval="30 19 * *
     trigger_get_dag_metadata_dag = TriggerDagRunOperator(
         task_id="trigger_get_metadata_dag", trigger_dag_id="template_dag_get_runtime_stats", conf={"source_dag": "template_dag_w_get_metadata_trigger", "target_tbl": "eg_target_tbl"}
     )
-    # in future, 'trigger_run_id' is likely to be a new param (MR is approved, but awaiting suite of unit test runs to complete)
-    # trigger_get_dag_metadata_dag = TriggerDagRunOperator(task_id="trigger_get_metadata_dag", trigger_dag_id="template_dag_get_runtime_stats", trigger_run_id="template_dag_w_get_metadata_trigger")
 
 # graph
 start_task >> example_task >> trigger_get_dag_metadata_dag >> end_task

@@ -121,3 +121,21 @@ trigger_dag_w_ip:
 debug:
 	# use this if you need to reinstall airflow
 	rm ~/airflow/airflow.db
+
+#############################################################################################
+# my tests
+#############################################################################################
+test:
+	curl -X POST http://localhost:8080/api/v1/roles \
+	-H "Content-Type: application/json" \
+	--user "pfry:${adm_pass}" \
+	-d "{\"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"Website\"}},{\"action\":{\"name\":\"can_edit\"},\"resource\":{\"name\":\"DAG:tutorial\"}},{\"action\":{\"name\":\"can_create\"},\"resource\":{\"name\":\"Task Instances\"}}],\"name\":\"new_custom_role\"}"
+
+test2:
+	curl -X POST "http://localhost:8080/api/v1/roles" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"Website\"}},{\"action\":{\"name\":\"can_edit\"},\"resource\":{\"name\":\"DAG:tutorial\"}},{\"action\":{\"name\":\"can_create\"},\"resource\":{\"name\":\"Task Instances\"}}],\"name\":\"new_custom_role\"}"
+
+test3:
+	curl -X PATCH -d '{"is_paused": true}' 'http://localhost:8080/api/v1/dags/example_dag?update_mask=is_paused' -H 'content-type: application/json' --user "pfry:${adm_pass}"
+
+test4:
+	python3 airflow_create_rbac_role.py -u http://localhost:8080 -r airflow_creator -d example_dag

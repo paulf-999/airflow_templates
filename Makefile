@@ -165,6 +165,18 @@ trigger_dag_w_ip:
 	$(info [+] Trigger an Airflow DAG with input provided)
 	@airflow dags trigger template_dms_task_dag --conf '{"dms_task_name":"example-task"}'
 
+#############################################################################################
+# Airflow tests
+#############################################################################################
+test:
+	pytest tests/test_dag_loader.py --dag_name example_dag --disable-pytest-warnings -v -q
+
+test2:
+	pytest tests/test_dag_validation.py --dag_name example_dag --disable-pytest-warnings -v -q
+
+#############################################################################################
+# Drop Airflow instance
+#############################################################################################
 debug:
 	# use this if you need to reinstall airflow
 	rm -r ~/airflow/
@@ -173,22 +185,3 @@ debug:
 kill_af_scheduler_and_webserver:
 	cat ~/airflow/airflow-scheduler.pid | xargs kill
 	cat ~/airflow/airflow-webserver.pid | xargs kill
-
-#############################################################################################
-# my tests
-#############################################################################################
-test:
-	curl -X POST http://localhost:8080/api/v1/roles \
-	-H "Content-Type: application/json" \
-	--user "pfry:${adm_pass}" \
-	-d "{\"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"Website\"}},{\"action\":{\"name\":\"can_edit\"},\"resource\":{\"name\":\"DAG:tutorial\"}},{\"action\":{\"name\":\"can_create\"},\"resource\":{\"name\":\"Task Instances\"}}],\"name\":\"new_custom_role\"}"
-
-test2:
-	curl -X POST "http://localhost:8080/api/v1/roles" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"Website\"}},{\"action\":{\"name\":\"can_edit\"},\"resource\":{\"name\":\"DAG:tutorial\"}},{\"action\":{\"name\":\"can_create\"},\"resource\":{\"name\":\"Task Instances\"}}],\"name\":\"new_custom_role\"}"
-
-test3:
-	curl -X PATCH -d '{"is_paused": true}' 'http://localhost:8080/api/v1/dags/example_dag?update_mask=is_paused' -H 'content-type: application/json' --user "pfry:${adm_pass}"
-
-test4:
-	python3 airflow_create_rbac_role.py -u http://localhost:8080 -r airflow_creator -d example_dag
-
