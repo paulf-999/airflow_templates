@@ -25,7 +25,9 @@ Note: `template_dag` is also timezone-aware (i.e., uses the python module `pendu
 
 To create a local install of Airflow containing the prerequisite files, run `make`!
 
-### Scripted Airflow variable creation via CLI
+---
+
+#### Scripted Airflow variable creation via CLI
 
 To create an Airflow variable, add / change the entries listed in the Makefile recipe `create_airflow_variables`
 
