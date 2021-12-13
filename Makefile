@@ -108,6 +108,15 @@ create_creator_user_example:
 		--role User \
 		--email creator_demo@test.com
 
+create_custom_role_example:
+	curl -X POST http://localhost:8080/api/v1/roles \
+	-H "Content-Type: application/json" \
+	--user "pfry:${adm_pass}" \
+	-d "{\"name\":\"read_only_role\", \"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"DAGs\"}}]}"
+
+add_user_to_role:
+	airflow users add-role -u pfry -r read_only_role
+
 start_scheduler:
 	$(info [+] Start the scheduler)
 	# open a new terminal or else run webserver with ``-D`` option to run it as a daemon
@@ -164,38 +173,6 @@ debug:
 kill_af_scheduler_and_webserver:
 	cat ~/airflow/airflow-scheduler.pid | xargs kill
 	cat ~/airflow/airflow-webserver.pid | xargs kill
-
-#############################################################################################
-# add user to role
-#############################################################################################
-create_ro_user:
-	$(info [+] Create user & assign them the 'user' role in Airflow)
-	@airflow users create \
-		--username read_only_demo \
-		--password ${user_demo_pass} \
-		--firstname read_only_demo \
-		--lastname read_only_demo \
-		--role Viewer \
-		--email read_only_demo@test.com
-
-create_creator_user:
-	$(info [+] Create user & assign them the 'user' role in Airflow)
-	@airflow users create \
-		--username creator_demo \
-		--password ${user_demo_pass} \
-		--firstname creator_demo \
-		--lastname creator_demo \
-		--role User \
-		--email creator_demo@test.com
-
-create_role:
-	curl -X POST http://localhost:8080/api/v1/roles \
-	-H "Content-Type: application/json" \
-	--user "pfry:${adm_pass}" \
-	-d "{\"name\":\"read_only_role\", \"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"DAGs\"}}]}"
-
-add_user_to_role:
-	airflow users add-role -u pfry -r read_only_role
 
 #############################################################################################
 # my tests
