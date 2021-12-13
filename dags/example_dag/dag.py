@@ -24,14 +24,6 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.operators.python import get_current_context
 
-
-# TODOs
-# 1) Done - Fetch DAG metadata
-# 2) Done - Create task groups
-# 3) Not started - Use task decorators
-# 4) Airflow unit tests - WIP
-# 5) Airflow templates
-
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("airflow.task")

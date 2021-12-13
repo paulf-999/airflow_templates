@@ -35,7 +35,7 @@ To create an Airflow variable, add / change the entries listed in the Makefile r
 
 To create an Airflow connection, add / change the entries listed in the Makefile recipe `create_airflow_connections`
 
-As well as containing a `Makefile` to script the install of a local Airflow instance, the `Makefile` shows the commands to script the creation of Airflow variables anc connections.
+As well as containing a `Makefile` to script the install of a local Airflow instance, the `Makefile` shows the commands to script the creation of Airflow variables and connections.
 
 ---
 
@@ -62,7 +62,7 @@ Some of the Airflow config changes that have been applied include:
 Note: Many of these changes have been applied/come from [this Medium.com blog post](https://medium.com/@agordienko/apache-airflow-cheatsheet-205f82d6edda).
 
 | Config change | Config section | Description                  |
-| -------| -----------------------------|
+| -------| -----------------------------| ---- |
 | dags_folder | core | To obviously point to the correct DAGs folder! |
 | default_timezone | core | To use the local/desired timezone, as opposed to UTC |
 | load_examples | core | This is set to `False` to prevent loading the examples |
@@ -83,8 +83,9 @@ Note: Many of these changes have been applied/come from [this Medium.com blog po
 1. Done - Fetch DAG metadata.
 2. Done - For a given DAG, get the corresponding TASK metadata
 3. Done - Create task groups
+4. In progress - Create unit tests
 4. Not started - Use task decorators
-5. Airflow templates & unit tests
+5. Airflow templates
 
 ### Reading / links (note to self)
 
