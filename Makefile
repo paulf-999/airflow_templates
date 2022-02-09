@@ -50,7 +50,7 @@ install:
 	@pip install apache-airflow-providers-microsoft-mssql --constraint "${CONSTRAINT_URL}"
 	@pip install airflow-dbt --constraint "${CONSTRAINT_URL}"
 	@pip install humanfriendly
-	@pip install pyarrow
+	@pip install pyarrow==5.0.0
 	# Initialize the airflow db
 	@make init_airflow_db
 	# copy over the predefined airflow config
