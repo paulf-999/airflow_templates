@@ -38,7 +38,7 @@ sf_schema = "utilities"
 # sf_schema = os.environ["BIKE_SHOP_SCHEMA"]
 
 # NOTE: I think this initially needs to be commented out. However, it then needs to be uncommented, to successfully run
-conn = snowflake.connector.connect(user=sf_user, password=sf_pass, account=sf_account)
+# conn = snowflake.connector.connect(user=sf_user, password=sf_pass, account=sf_account)
 
 
 def snowf_conn(**kwargs):
