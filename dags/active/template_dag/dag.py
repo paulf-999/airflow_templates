@@ -40,7 +40,13 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
-with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+doc_md = """
+**Description**: Template/reusable DAG
+
+**Notes**: [Any desired notes here]
+"""
+
+with DAG(dag_id=dagname, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)

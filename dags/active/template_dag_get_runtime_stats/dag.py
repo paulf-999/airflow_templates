@@ -44,9 +44,10 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)
 
-    get_dag_runtime_stats = PythonOperator(task_id="get_dag_runtime_stats", python_callable=helpers.get_dag_runtime_stats, provide_context=True)
+    # get_dag_runtime_stats = PythonOperator(task_id="get_dag_runtime_stats", python_callable=helpers.get_dag_runtime_stats, provide_context=True)
 
     end_task = DummyOperator(task_id="end", dag=dag)
 
 # graph
-start_task >> get_dag_runtime_stats >> end_task
+# start_task >> get_dag_runtime_stats >> end_task
+start_task >> end_task
