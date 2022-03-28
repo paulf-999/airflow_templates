@@ -7,6 +7,7 @@ import humanfriendly
 from airflow.operators.python import get_current_context
 from airflow.models.dagbag import DagBag
 from airflow.models.dagrun import DagRun
+from airflow.models.taskinstance import TaskInstance
 
 # import snowflake.connector
 
@@ -47,6 +48,18 @@ def get_airflow_endpoints_and_ips_for_dag_runtime_stats():
     # get the run_id of this dagrun
     dag = DagBag().get_dag(src_dag_name)
     dag_runs = DagRun.find(dag_id=src_dag_name)
+
+    test = dag.get_task("example_task")
+    test1 = dag.get_task("example_task").extra_links
+    test2 = dag.get_task("example_task").get_t
+    test3 = dag.get_task("example_task").get_task_instances
+    test4 = dag.get_task("example_task").get_template_env
+
+    print(f"test = {test}")
+    print(f"test1 = {test1}")
+    print(f"test2 = {test2}")
+    print(f"test3 = {test3}")
+    print(f"test4 = {test4}")
 
     # with the run_id (var = last_dagrun_run_id), we can get: the state, the start/end time and the task details
     last_dagrun_run_id = dag.get_last_dagrun(include_externally_triggered=True)
@@ -121,7 +134,6 @@ def get_dag_runtime_stats(**kwargs):
                 if type(value) is dict and key == "dag_level_stats":
                     for child_key, child_value in value.items():
                         logger.info(f"{child_key} = {child_value}")
-                        # TODO: PF HERE!! See if you can get the task-level info here!
 
             logger.info("####################################################################")
             logger.info("TASK-level runtime metadata")
@@ -142,6 +154,7 @@ def get_dag_runtime_stats(**kwargs):
                         for child_key, child_value in value.items():
                             logger.info(f"{child_key} = {child_value}")
 
+                            # TODO: PF HERE!! See if you can get the task-level info here!
                             # Insert the dag_run data into the Snowflake table!
                             # TODO: uncomment
                             # cs.execute(
