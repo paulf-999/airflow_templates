@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Python Version  : 3.7
+Python Version  : 3.8
 * Name          : template_dag.py
-* Description   : Boilerplate Airflow DAG script.
+* Description   : Boilerplate Airflow DAG.
 * Created       : 11-06-2021
-* Usage         : python3 template_dag.py
 """
 
 __author__ = "Paul Fry"
@@ -17,9 +16,8 @@ import importlib
 import pendulum
 from time import time
 from airflow import DAG
-from airflow.utils.dates import days_ago
-from airflow.operators.python_operator import PythonOperator
-from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python import PythonOperator
+from airflow.operators.dummy import DummyOperator
 
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
@@ -27,7 +25,6 @@ logger = logging.getLogger("airflow.task")
 logger.setLevel(logging.INFO)
 
 local_tz = pendulum.timezone("Australia/Melbourne")
-
 dagpath = os.path.dirname(os.path.abspath(__file__))
 dagname = os.path.basename(dagpath)
 dagroot = os.path.dirname(dagpath)
@@ -52,7 +49,7 @@ with DAG(dag_id=dagname, doc_md=doc_md, default_args=default_args, schedule_inte
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.get_datetime, provide_context=True)
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
 
 # graph
 start_task >> hello_world_task >> end_task
