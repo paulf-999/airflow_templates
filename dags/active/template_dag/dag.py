@@ -45,11 +45,15 @@ doc_md = """
 
 with DAG(dag_id=dagname, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
-    # operators here, e.g.:
+    ####################################################################
+    # DAG Operators
+    ####################################################################
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
     hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
 
-# graph
+####################################################################
+# DAG Lineage
+####################################################################
 start_task >> hello_world_task >> end_task
