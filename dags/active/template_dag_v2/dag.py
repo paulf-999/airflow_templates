@@ -10,8 +10,8 @@ with DAG(dag_id=dag_name, default_args=default_args, schedule_interval=None, tag
     ####################################################################
 
     # separator tasks
-    start_task = DummyOperator(task_id="start", dag=dag)  # noqa
-    end_task = DummyOperator(task_id="end", dag=dag)  # noqa
+    start_task = DummyOperator(task_id="start")  # noqa
+    end_task = DummyOperator(task_id="end")  # noqa
 
     hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)  # noqa
 
