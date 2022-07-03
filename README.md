@@ -15,7 +15,6 @@ Note: `template_dag` is also timezone-aware (i.e., uses the python module `pendu
     * Running Airflow locally, post-install
     * Scripted Airflow variable creation via CLI
     * Scripted Airflow connection creation via CLI
-* Example and Template DAGs
 
 ---
 
@@ -36,22 +35,6 @@ To create an Airflow variable, add / change the entries listed in the Makefile r
 To create an Airflow connection, add / change the entries listed in the Makefile recipe `create_airflow_connections`
 
 As well as containing a `Makefile` to script the install of a local Airflow instance, the `Makefile` shows the commands to script the creation of Airflow variables and connections.
-
----
-
-## Example and Template DAGs
-
-In addition, the repo contains a number of example & template Airflow DAGs, listed below:
-
-| DAG | Description                  |
-| -------| -----------------------------|
-| template_dag | Stripped back boilerplate/starting point to use for building a DAG. Makes use of pendulum, to make DAGs timezone-aware. |
-| template_dag_w_get_metadata_trigger | Same as `template_dag`, except there's added functionality to trigger a separate DAG to get Airflow runtime metadata |
-| template_dag_get_runtime_stats | Reusable Airflow DAG used to capture Airflow DAG runtime statistics/metadata at both the DAG and DAG-task level. |
-| examples/ | Further example DAGs, e.g.: showing:<br/>* `Task_group` usage<br/>* How to trigger another DAG from within a DAG etc. |
-| more_templates/ | Templated examples, e.g.:<br/>* A templated snowflake operator<br/>* Templated slack post usage<br/>* Templated dbt calls etc. |
-
-These make use of automated (scripted CLI commands) variable and connection creation.
 
 ---
 
