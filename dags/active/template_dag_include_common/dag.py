@@ -1,9 +1,10 @@
 from include.common import *  # noqa
+from airflow.operators.python import PythonOperator
 
 # fetch common variables from shared python module
-dag_name, helpers, queries = get_common_dag_vars(__file__)  # noqa
+dag_name, helpers, queries, doc_md = get_common_dag_vars(__file__)  # noqa
 
-with DAG(dag_id=dag_name, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:  # noqa
+with DAG(dag_id=dag_name, default_args=default_args, schedule_interval=None, tags=["template"], doc_md=doc_md) as dag:  # noqa
 
     ####################################################################
     # DAG Operators

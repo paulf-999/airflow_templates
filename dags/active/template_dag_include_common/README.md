@@ -13,4 +13,3 @@ Where the purpose of each of the files within the template are as follows:
 ## TODOS
 
 1) Read input from a config file
-2) Read in a README.md & pass this into the DAG context manager var

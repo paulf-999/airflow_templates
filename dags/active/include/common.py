@@ -43,4 +43,15 @@ def get_common_dag_vars(ip_calling_dag):
     helpers = importlib.import_module(".__dag_helpers", package=dag_name)
     queries = importlib.import_module(".__sql_queries", package=dag_name)
 
-    return dag_name, helpers, queries
+    doc_md = try_render_readme(dag_path)
+
+    return dag_name, helpers, queries, doc_md
+
+
+def try_render_readme(dag_path):
+
+    try:
+        return open(os.path.join(dag_path, "README.md")).read()
+    except Exception:
+        print("Error, cannot render README.md")
+        return ""
