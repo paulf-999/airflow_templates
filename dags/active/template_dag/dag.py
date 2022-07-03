@@ -25,31 +25,27 @@ logger = logging.getLogger("airflow.task")
 logger.setLevel(logging.INFO)
 
 local_tz = pendulum.timezone("Australia/Melbourne")
-dagpath = os.path.dirname(os.path.abspath(__file__))
-dagname = os.path.basename(dagpath)
-dagroot = os.path.dirname(dagpath)
+dag_path = os.path.dirname(os.path.abspath(__file__))
+dag_name = os.path.basename(dag_path)
+dag_root = os.path.dirname(dag_path)
 
-if dagroot not in sys.path:
-    sys.path.append(dagroot)
+if dag_root not in sys.path:
+    sys.path.append(dag_root)
 
-helpers = importlib.import_module(".__dag_helpers", package=dagname)
-queries = importlib.import_module(".__sql_queries", package=dagname)
+helpers = importlib.import_module(".__dag_helpers", package=dag_name)
+queries = importlib.import_module(".__sql_queries", package=dag_name)
 
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
-doc_md = """
-**Description**: Template/reusable DAG
+doc_md = helpers.try_render_readme(dag_path)
 
-**Notes**: [Any desired notes here]
-"""
-
-with DAG(dag_id=dagname, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     ####################################################################
     # DAG Operators
     ####################################################################
-    start_task = DummyOperator(task_id="start", dag=dag)
-    end_task = DummyOperator(task_id="end", dag=dag)
+    start_task = DummyOperator(task_id="start")
+    end_task = DummyOperator(task_id="end")
 
     hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
 

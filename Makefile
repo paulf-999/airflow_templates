@@ -24,7 +24,7 @@ deps:
 	# Airflow works a lot better with Python3.7 at the moment (compared to 3.8)
 	# As such, set up your local Python version to use 3.7
 	@brew install pyenv
-	@brew install jq
+	@pip install jq
 	@pyenv install 3.7.10
 	@pyenv local 3.7.10
 	# note: ensure you add pyenv to your path file. Run `pyenv init` for instructions
