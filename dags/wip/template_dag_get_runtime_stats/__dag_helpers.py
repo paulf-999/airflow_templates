@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 local_tz = pendulum.timezone("Australia/Melbourne")
 utc_tz = pendulum.timezone("UTC")
 
-
+"""
 # TODO: revert this vars
 sf_db = "BIKE_SHOP_NP_RAW_DB"
 sf_schema = "utilities"
@@ -38,6 +38,7 @@ conn = snowflake.connector.connect(
     database=sf_db,
     schema=sf_schema,
 )
+"""
 
 
 def get_airflow_endpoints_and_ips_for_dag_runtime_stats():
@@ -105,16 +106,16 @@ def get_dag_runtime_stats(**kwargs):
                 logger.info(f"{child_key} = {child_value}")
 
     # open a sf conn, ready to insert the metadata
-    cs = conn.cursor()
+    # cs = conn.cursor()
 
     for dag_run in dag_runs:
         # get the dag_run details for the Airflow Dag that triggered this
         if dag_run.execution_date == last_dagrun_run_id.execution_date:
 
             # update the DAG metadata in snowflake (i.e. the 'last_run' and 'next_run' values)
-            cs.execute(
-                f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG (DAG_NAME, TARGET_TBL, DAG_SCHEDULE, LAST_DAG_RUN, NEXT_DAG_RUN, QUERY_TS) VALUES ('{runtime_stats_dict['dag']['dag_name']}', '{runtime_stats_dict['dag']['target_tbl']}', '{runtime_stats_dict['dag']['schedule_interval']}', '{runtime_stats_dict['dag']['last_dag_run']}', '{runtime_stats_dict['dag']['next_dag_run']}', current_timestamp());"
-            )
+            # cs.execute(
+            #    f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG (DAG_NAME, TARGET_TBL, DAG_SCHEDULE, LAST_DAG_RUN, NEXT_DAG_RUN, QUERY_TS) VALUES ('{runtime_stats_dict['dag']['dag_name']}', '{runtime_stats_dict['dag']['target_tbl']}', '{runtime_stats_dict['dag']['schedule_interval']}', '{runtime_stats_dict['dag']['last_dag_run']}', '{runtime_stats_dict['dag']['next_dag_run']}', current_timestamp());" # noqa
+            # )
             # cleanse the date fields to remove the timezone '+00' str
             start_date = datetime.strptime(str(dag_run.start_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f")
             end_date = datetime.strptime(str(dag_run.end_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f")
@@ -157,9 +158,9 @@ def get_dag_runtime_stats(**kwargs):
                             logger.info(f"{child_key} = {child_value}")
 
                             # Insert the dag_run data into the Snowflake table!
-                            cs.execute(
-                                f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG_RUN (DAG_NAME, DAG_RUN, DAG_RUN_STATE, DAG_RUN_START_DATE, DAG_RUN_END_DATE, DAG_RUN_DURATION, DAG_RUN_TASK_NAME, DAG_RUN_TASK_STATE, DAG_RUN_TASK_START_DATE, DAG_RUN_TASK_END_DATE, DAG_RUN_TASK_DURATION, QUERY_TS) VALUES ('{runtime_stats_dict['dag_level_stats']['dag_name']}', '{runtime_stats_dict['dag_level_stats']['dag_run']}', '{runtime_stats_dict['dag_level_stats']['dag_run_state']}', '{runtime_stats_dict['dag_level_stats']['dag_run_start_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_end_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_duration']}','{runtime_stats_dict['dag_task_level_stats']['task_name']}', '{runtime_stats_dict['dag_task_level_stats']['task_state']}', '{runtime_stats_dict['dag_task_level_stats']['task_start_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_end_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_duration']}', current_timestamp());"
-                            )
+                            # cs.execute(
+                            #    f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG_RUN (DAG_NAME, DAG_RUN, DAG_RUN_STATE, DAG_RUN_START_DATE, DAG_RUN_END_DATE, DAG_RUN_DURATION, DAG_RUN_TASK_NAME, DAG_RUN_TASK_STATE, DAG_RUN_TASK_START_DATE, DAG_RUN_TASK_END_DATE, DAG_RUN_TASK_DURATION, QUERY_TS) VALUES ('{runtime_stats_dict['dag_level_stats']['dag_name']}', '{runtime_stats_dict['dag_level_stats']['dag_run']}', '{runtime_stats_dict['dag_level_stats']['dag_run_state']}', '{runtime_stats_dict['dag_level_stats']['dag_run_start_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_end_date']}', '{runtime_stats_dict['dag_level_stats']['dag_run_duration']}','{runtime_stats_dict['dag_task_level_stats']['task_name']}', '{runtime_stats_dict['dag_task_level_stats']['task_state']}', '{runtime_stats_dict['dag_task_level_stats']['task_start_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_end_date']}', '{runtime_stats_dict['dag_task_level_stats']['task_duration']}', current_timestamp());" # noqa
+                            # )
 
                 logger.info("###########################################")
         else:
@@ -168,7 +169,7 @@ def get_dag_runtime_stats(**kwargs):
             logger.debug(f"dag_run.execution_date = {dag_run.execution_date}")
             logger.debug(f"last_dagrun_run_id = {last_dagrun_run_id}")
 
-    conn.close()
+    # conn.close()
 
     return
 
