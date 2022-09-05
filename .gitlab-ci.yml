@@ -21,7 +21,7 @@ unit_test_airflow_validation_tests:
   #only runs the following if you're on a feature or develop branch
     - if: '$CI_COMMIT_BRANCH =~ /^feature./ || $CI_COMMIT_BRANCH =~ /^develop./'
   stage: test
-    image:
+  image:
     name: apache/airflow:2.0.2-python3.7
     entrypoint: [""]
   before_script:

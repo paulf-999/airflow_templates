@@ -5,7 +5,7 @@ all: installations
 export adm_pass=${sf_pass_dbt_demo}
 export user_demo_pass=${user_demo}
 
-CONFIG_FILE=envvars.json
+CONFIG_FILE=config.json
 PIP_INSTALL_CMD=pip install -q --disable-pip-version-check
 ########################################
 # fetch inputs from config (json) file

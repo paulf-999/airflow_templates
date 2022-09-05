@@ -190,10 +190,12 @@ kill_af_scheduler_and_webserver:
 # Docker
 #############################################################################################
 docker:
-	#docker run apache/airflow:2.0.2-python3.7
+	#docker pull apache/airflow:2.2.5
+	docker run apache/airflow:2.2.5 standalone
 	#docker-compose start
 	#docker pull apache/airflow:2.0.2-python3.7
-	docker build --pull -t apache/airflow:2.0.2-python3.7 .
+	#docker build --pull -t apache/airflow:2.0.2-python3.7 .
+	#docker build --pull -t apache/airflow:2.0.2-python3.7 .
 
 logging:
 	airflow db init 2>null
