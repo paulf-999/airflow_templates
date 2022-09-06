@@ -36,7 +36,8 @@ def get_dag_run_metadata(dag_name):
 
     # get dag_runs
     print(dag_name)
-    print("------------------------------")
+    logger.info("------------------------------")
+    logger.info("DAG-level details")
     dag_runs = DagRun.find(dag_id=dag_name)
     for dag_run in dag_runs:
         # print(f"dag_run = {dag_run}")
@@ -46,17 +47,18 @@ def get_dag_run_metadata(dag_name):
         dag_run_duration = humanfriendly.format_timespan(dag_run_end_date - dag_run_start_date)
         dag_run_state = dag_run.state
 
-        for x in [dag_run, dag_run_state, dag_run_duration]:
+        for x in [dag_run.run_id, dag_run_state, dag_run_duration]:
             print(x)
 
         print("##############################")
 
         get_dag_run_task_metadata(dag_run)
 
-    return dag_run_start_date, dag_run_end_date, dag_run_duration, dag_run_state
-
 
 def get_dag_run_task_metadata(dag_run):
+
+    logger.info("------------------------------")
+    logger.info("Task-level details")
 
     dag_run_tasks = dag_run.get_task_instances()
     for task in dag_run_tasks:

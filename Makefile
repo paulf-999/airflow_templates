@@ -22,14 +22,14 @@ installations: deps install clean
 deps:
 	$(info [+] Download the relevant dependencies)
 	@${PIP_INSTALL_CMD} jq
-	#@${PIP_INSTALL_CMD} apache-airflow==${AIRFLOW_VERSION} --constraint ${CONSTRAINT_URL}
+	@${PIP_INSTALL_CMD} apache-airflow==${AIRFLOW_VERSION}
 	@${PIP_INSTALL_CMD} -r requirements.txt
 
 .PHONY: install
 install:
 	$(info [+] Install any required python / airflow libraries)
 	# Initialize the airflow db
-	@airflow db init &> airflow.log 2>&1 &
+	@airflow db init
 	@sleep 10
 	# copy over the predefined airflow config
 	@cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
@@ -40,8 +40,8 @@ install:
 	@make create_creator_user_example
 	# start the airflow scheduler & webserver
 	# open a new terminal or else run webserver with ``-D`` option to run it as a daemon
-	@airflow scheduler -D &> airflow.log 2>&1 &
-	@airflow webserver --port 8080 -D &> airflow.log 2>&1 &
+	@airflow scheduler -D
+	@airflow webserver --port 8080 -D
 	# visit localhost:8080 in the browser and use the admin account just created to login
 
 .PHONY: clean
@@ -62,7 +62,7 @@ create_admin_user:
 		--firstname Peter \
 		--lastname Parker \
 		--role Admin \
-		--email spiderman@superhero.org &> airflow.log 2>&1 &
+		--email spiderman@superhero.org
 
 create_ro_user_example:
 	$(info [+] Create user & assign them the 'user' role in Airflow)
@@ -72,7 +72,7 @@ create_ro_user_example:
 		--firstname read_only_demo \
 		--lastname read_only_demo \
 		--role Viewer \
-		--email read_only_demo@test.com &> airflow.log 2>&1 &
+		--email read_only_demo@test.com
 
 create_creator_user_example:
 	$(info [+] Create user & assign them the 'user' role in Airflow)
@@ -82,7 +82,7 @@ create_creator_user_example:
 		--firstname creator_demo \
 		--lastname creator_demo \
 		--role User \
-		--email creator_demo@test.com &> airflow.log 2>&1 &
+		--email creator_demo@test.com
 
 create_custom_role_example:
 	curl -X POST http://localhost:8080/api/v1/roles \
@@ -91,7 +91,7 @@ create_custom_role_example:
 	-d "{\"name\":\"read_only_role\", \"actions\":[{\"action\":{\"name\":\"can_read\"},\"resource\":{\"name\":\"DAGs\"}}]}"
 
 add_user_to_role:
-	airflow users add-role -u pfry -r read_only_role &> airflow.log 2>&1 &
+	airflow users add-role -u pfry -r read_only_role
 
 #############################################################################################
 # Custom-Airflow targets

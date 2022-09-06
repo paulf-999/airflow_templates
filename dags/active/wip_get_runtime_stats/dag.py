@@ -39,37 +39,54 @@ default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure"
 
 doc_md = helpers.try_render_readme(dag_path)
 
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+dag = DAG(
+    dag_id=dag_name,
+    default_args=default_args,
+    doc_md=doc_md,
+    schedule_interval=None,
+)
 
-    ####################################################################
-    # DAG Operators
-    ####################################################################
-    start_task = DummyOperator(task_id="start")
-    end_task = DummyOperator(task_id="end")
-
-    # TODO
-    # get_all_dags
-
-    get_dag_runtime_stats = PythonOperator(task_id="get_dag_run_metadata", python_callable=helpers.get_dag_run_metadata)
+# with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
 ####################################################################
-# DAG Lineage
+# DAG Operators
 ####################################################################
-# start_task >> get_dag_runtime_stats >> end_task
+start_task = DummyOperator(task_id="start", dag=dag)
+end_task = DummyOperator(task_id="end", dag=dag)
+
+# TODO
+# get_all_dags
+
+# get_dag_runtime_stats = PythonOperator(task_id="get_dag_run_metadata", python_callable=helpers.get_dag_run_metadata, op_kwargs={"dag_name": "template_dag"})
+
+for selected_dag in helpers.get_dags():
+    # print(dag)
+
+    if selected_dag != dag_name:
+        # call get dag_run metadata
+        get_dag_runtime_stats = PythonOperator(task_id=f"get_dag_run_metadata_for_{selected_dag}", python_callable=helpers.get_dag_run_metadata, op_kwargs={"dag_name": selected_dag}, dag=dag)
+
+        ####################################################################
+        # DAG Lineage
+        ####################################################################
+        start_task >> get_dag_runtime_stats >> end_task
+        # start_task >> end_task
+
 
 if __name__ == "__main__":
     # helpers.get_dag_run_metadata("template_dag")
     # helpers.get_dags()
 
-    for dag in helpers.get_dags():
-        print(dag)
+    for my_dag in helpers.get_dags():
+        print(my_dag)
+        if my_dag != dag_name:
 
-        # TODO:
-        # call get dag_run metadata
-        get_dag_run_metadata = PythonOperator(task_id=f"get_dag_run_metadata_for_{dag}", python_callable=helpers.get_dag_run_metadata, conf={"dag_name": dag}, dag=dag)
+            # TODO:
+            # call get dag_run metadata
+            get_dag_run_metadata = PythonOperator(task_id=f"get_dag_run_metadata_for_{my_dag}", python_callable=helpers.get_dag_run_metadata, op_kwargs={"dag_name": my_dag})
 
-        # TODO
-        # get dag_run_task metadata
+            # TODO
+            # get dag_run_task metadata
 
-        # TODO
-        # get DAG metadata
+            # TODO
+            # get DAG metadata
