@@ -8,11 +8,13 @@
 
 1) Copy your DBT project into the `dbt` folder at the root of the DAGs repo. I.e.:
 
-dags/
-dbt/ <- in here
-docs/
-modules/
-tests/
+```
+    dags/
+    dbt/ <- in here
+    docs/
+    modules/
+    tests/
+```
 
 2) Within your DAG, update the value of the variable `dbt_project_dir` to the path of the DBT project. E.g.:
 
