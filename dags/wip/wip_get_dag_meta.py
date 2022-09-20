@@ -8,7 +8,7 @@ import pandas as pd
 
 dagpath, dagname, dagroot, helpers, queries, templates = setup_dag(__file__)
 
-dag = get_dag_object(__file__)
+dag = get_dag_object(__file__)  # TODO - change
 
 task_flds = ["task_id", "_upstream_task_ids", "_downstream_task_ids", "parameters", "warehouse", "database", "role", "schema", "template", "function"]
 
