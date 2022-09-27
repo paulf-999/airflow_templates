@@ -1,6 +1,5 @@
 import calendar
 import logging
-import os
 from datetime import datetime
 
 import humanfriendly
@@ -31,9 +30,9 @@ def get_dags():
 def get_dag_run_metadata(dag_name):
     """Get DAG-level dag_run metadata for a given DAG"""
     logger.info(f"DAG name: {dag_name}")
-    logger.info("------------------------------")
+    logger.info("############################################################")
     logger.info("dag_run details")
-    logger.info("------------------------------")
+    logger.info("############################################################")
     first_day_of_month, last_day_of_month = get_first_and_last_dates()
     # fmt: off
     dag_runs = DagRun.find(
@@ -114,23 +113,3 @@ def fmt_airflow_dt_vals(ip_dt_val):
     formatted_dt_value = str(ip_dt_val.astimezone(local_tz)).split("+")[0]
 
     return datetime.strptime(formatted_dt_value, "%Y-%m-%d %H:%M:%S.%f")
-
-
-def try_render_readme(dag_path):
-    """
-    Returns "doc_md" parameter from dag_object_kwargs if it exists,
-    otherwise tries to read README.md from "dagpath",
-    otherwise fails silently and returns empty string.
-
-    Parameters:
-        dag_object_kwargs (dict): kwargs used to define DAG object
-        dag_path (str): path for dag
-
-    Returns:
-        readme (str): Readme describing the dag
-    """
-    try:
-        return open(os.path.join(dag_path, "README.md")).read()
-    except FileNotFoundError:
-        print("Error, cannot render README.md")
-        return ""
