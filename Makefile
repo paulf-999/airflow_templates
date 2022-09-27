@@ -119,7 +119,7 @@ test2:
 debug:
 	# use this if you need to reinstall airflow
 	@ rm -r ~/airflow/
-	@# rm ~/airflow/airflow.db
+	@ rm ~/airflow/airflow.db
 
 kill_af_scheduler_and_webserver:
 	# stop the Airflow scheduler & webserver

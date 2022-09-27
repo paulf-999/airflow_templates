@@ -2,8 +2,8 @@
 """
 Python Version  : 3.8
 * Name          : template_dag.py
-* Description   : Boilerplate Airflow DAG.
-* Created       : 11-06-2021
+* Description   : DAG to fetch runtime stats for all registered DAGs
+* Created       : 27-09-2022
 """
 
 __author__ = "Paul Fry"
@@ -14,7 +14,6 @@ import sys
 import logging
 import importlib
 import pendulum
-from time import time
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
@@ -35,7 +34,15 @@ if dag_root not in sys.path:
 helpers = importlib.import_module(".__dag_helpers", package=dag_name)
 queries = importlib.import_module(".__sql_queries", package=dag_name)
 
-default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
+# fmt: off
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "email_on_failure": False,
+    "email_on_retry": False,
+    "start_date": pendulum.now(local_tz).subtract(days=1)
+}
+# fmt: on
 
 doc_md = helpers.try_render_readme(dag_path)
 
@@ -54,13 +61,20 @@ end_task = DummyOperator(task_id="end", dag=dag)
 
 # get_all_dags
 for selected_dag in helpers.get_dags():
-    # print(dag)
 
+    # note: don't include the current DAG (get_runtime_stats)
     if selected_dag != dag_name:
         # call get dag_run metadata
-        get_dag_runtime_stats = PythonOperator(task_id=f"get_dag_run_metadata_for_{selected_dag}", python_callable=helpers.get_dag_run_metadata, op_kwargs={"dag_name": selected_dag}, dag=dag)
+        # fmt: off
+        get_dag_run_metadata = PythonOperator(
+            task_id=f"get_dag_run_metadata_for_{selected_dag}",
+            python_callable=helpers.get_dag_run_metadata,
+            op_kwargs={"dag_name": selected_dag},
+            dag=dag
+        )
+        # fmt: on
 
         ####################################################################
         # DAG Lineage
         ####################################################################
-        start_task >> get_dag_runtime_stats >> end_task
+        start_task >> get_dag_run_metadata >> end_task
