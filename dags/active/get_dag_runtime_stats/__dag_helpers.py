@@ -65,9 +65,9 @@ def get_dag_run_metadata(dag_name):
 
 def get_dag_run_task_metadata(dag_run):
     """Get TASK-level dag_run metadata for a given DAG"""
-    logger.info("------------------------------")
+    logger.info("##############################")
     logger.info("Task-level details")
-    logger.info("------------------------------")
+    logger.info("##############################")
 
     dag_run_tasks = dag_run.get_task_instances()
     for task in dag_run_tasks:

@@ -35,6 +35,7 @@ for selected_dag in dag_helpers.get_dags():
     # note: don't include the current DAG (get_runtime_stats)
     if selected_dag != dag_name:
         # call get dag_run metadata
+
         # fmt: off
         get_dag_run_metadata = PythonOperator(
             task_id=f"get_dag_run_metadata_for_{selected_dag}",
