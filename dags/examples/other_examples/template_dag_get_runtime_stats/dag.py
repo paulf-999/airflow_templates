@@ -15,8 +15,8 @@ import logging
 import importlib
 import pendulum
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
 
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
@@ -37,6 +37,7 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
+
 with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template", "metadata"]) as dag:
 
     # operators here, e.g.:
@@ -44,10 +45,8 @@ with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags
 
     get_dag_runtime_stats = PythonOperator(task_id="get_dag_runtime_stats", python_callable=helpers.get_dag_runtime_stats)
 
-    # sf_bit = PythonOperator(task_id="get_dag_runtime_stats", python_callable=helpers.snowf_conn)
-
     end_task = DummyOperator(task_id="end", dag=dag)
 
 # graph
-# start_task >> end_task
 start_task >> get_dag_runtime_stats >> end_task
+# start_task >> end_task

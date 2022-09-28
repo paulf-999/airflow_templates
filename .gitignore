@@ -1,3 +1,4 @@
 .python-version
 .DS_Store
 airflow.log
+__pycache__/
