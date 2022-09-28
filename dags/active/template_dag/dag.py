@@ -24,7 +24,7 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=dag_helpers.hello_world)
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=common.hello_world)
 
 ####################################################################
 # DAG Lineage

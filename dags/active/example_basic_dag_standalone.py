@@ -37,7 +37,11 @@ def hello_world(**kwargs):
 with DAG(dag_id=os.path.basename(__file__).replace(".py", ""), default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     start_task = DummyOperator(task_id="start", dag=dag)
-
-    read_op_in_sub_tsk = PythonOperator(task_id="eg_task", python_callable=hello_world)
-
     end_task = DummyOperator(task_id="end", dag=dag)
+
+    example_task = PythonOperator(task_id="hello_world_task", python_callable=hello_world)
+
+####################################################################
+# DAG Lineage
+####################################################################
+start_task >> example_task >> end_task
