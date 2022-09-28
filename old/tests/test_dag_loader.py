@@ -1,7 +1,7 @@
 # ref: https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html#unit-tests
-
 import pytest
 from airflow.models import DagBag
+
 
 # Fixtures are used when we want to run some code before every test method.
 # So instead of repeating the same code in every test we define fixtures.

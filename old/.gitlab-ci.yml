@@ -1,0 +1,50 @@
+variables:
+  CI_JOB_NAME: airflow-linting
+  AIRFLOW_HOME: /builds/<folder_dir>
+  AIRFLOW__CORE_dags_folder: /builds/<folder_dir>/dags/active/
+  AIRFLOW_LOGGING_logging_level: WARNING
+
+stages:
+- build
+- test
+
+build_job:
+  stage: build
+  script:
+    - pip3 install pytest -q
+    - pip3 install pylint-airflow
+    # initialise the airflow db
+    - airflow db init 2>/dev/null
+
+unit_test_airflow_validation_tests:
+  rules:
+  #only runs the following if you're on a feature or develop branch
+    - if: '$CI_COMMIT_BRANCH =~ /^feature./ || $CI_COMMIT_BRANCH =~ /^develop./'
+  stage: test
+  image:
+    name: apache/airflow:2.0.2-python3.7
+    entrypoint: [""]
+  before_script:
+    - echo "Started job 'run_airflow_validation_tests' - $(date)"
+  script:
+    - pytest tests/test_dag_validation.py --dag_name example_dag --disable-pytest-warnings -v -q
+  after_script:
+    - echo "Finished job 'run_airflow_validation_tests' - $(date)"
+  allow_failure: true
+
+unit_test_airflow_linter:
+  rules:
+  #only runs the following if you're on a release or main branch
+    - if: '$CI_COMMIT_BRANCH =~ /^release./ || $CI_COMMIT_BRANCH =~ /^main./'
+  stage: test
+
+  image:
+    name: apache/airflow:2.0.2-python3.7
+    entrypoint: [""]
+  before_script:
+    - echo "Started job 'airflow-linter' - $(date)"
+  script:
+    - pylint --load-plugins=pylint_airflow dags/active/*.py
+  after_script:
+    - echo "Finished job 'airflow-linter' - $(date)"
+  allow_failure: true
