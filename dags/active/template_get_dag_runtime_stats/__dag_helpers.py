@@ -4,7 +4,6 @@ from datetime import datetime
 
 import humanfriendly
 import pendulum
-from airflow.models.dagbag import DagBag
 from airflow.models.dagrun import DagRun
 
 # Set up a specific logger with our desired output level
@@ -14,17 +13,6 @@ logger.setLevel(logging.INFO)
 
 # capture TZ info
 local_tz = pendulum.timezone("Australia/Melbourne")
-
-
-def get_dags():
-    """Create a list of all DAG names registered to Airflow"""
-    dags = []
-    for dag in DagBag().dags.values():
-        # add dag name to list
-        dags.append(dag._dag_id)
-        logger.info(f"dag = {dag._dag_id}")
-
-    return dags
 
 
 def get_dag_run_metadata(dag_name):

@@ -30,7 +30,7 @@ start_task = DummyOperator(task_id="start", dag=dag)
 end_task = DummyOperator(task_id="end", dag=dag)
 
 # get_all_dags
-for selected_dag in dag_helpers.get_dags():
+for selected_dag in common.get_dags():
 
     # note: don't include the current DAG (get_runtime_stats)
     if selected_dag != dag_name:

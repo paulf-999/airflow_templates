@@ -37,4 +37,4 @@ repos:
     hooks:
     -   id: sqlfluff-lint # Lints sql files with `SQLFluff`
         args: [--dialect, "snowflake"]
-        additional_dependencies: ['dbt-snowflake', 'sqlfluff-templater-dbt']
+        # additional_dependencies: ['dbt-snowflake', 'sqlfluff-templater-dbt']

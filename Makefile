@@ -5,7 +5,7 @@ all: installations
 export adm_pass=${sf_pass_dbt_demo}
 export user_demo_pass=${user_demo}
 
-CONFIG_FILE=config.json
+CONFIG_FILE=ip/config.json
 PIP_INSTALL_CMD=pip3 install -q --disable-pip-version-check
 ########################################
 # fetch inputs from config (json) file
@@ -32,7 +32,7 @@ install:
 	@airflow db init
 	@sleep 10
 	# copy over the predefined airflow config
-	@cp airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
+	@cp ip/airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
 	# Create the admin user
 	@make create_admin_user
 	# create example 'read-only' and 'creator' users
