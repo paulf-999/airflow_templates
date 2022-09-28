@@ -67,9 +67,9 @@ Note: Many of these changes have been applied/come from [this Medium.com blog po
 1. Done - Fetch DAG metadata.
 2. Done - For a given DAG, get the corresponding TASK metadata
 3. Done - Create task groups
-4. In progress - Create unit tests
-4. Not started - Use task decorators
-5. Airflow templates
+4. Done - Create unit tests (see tests folder at project root)
+5. Not started - Use task decorators
+6. Airflow templates
 
 ### Reading / links (note to self)
 
