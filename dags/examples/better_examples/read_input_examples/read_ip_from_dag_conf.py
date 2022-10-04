@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 dagpath, dagname, dagroot, helpers, queries, templates = setup_dag(__file__)  # noqa
 
 # Create the DAG object and add/override the any parameters. To add/override any params, just list these after the `__file__` variable. See the example below:
-# dag = get_dag_object(__file__, default_args={"email": "jbloggs@wesfarmers.com.au"}, tags=[""], aac_schedule_interval="30 8 * * *") # noqa
+# dag = get_dag_object(__file__, default_args={"email": "jbloggs@email.com"}, tags=[""], aac_schedule_interval="30 8 * * *") # noqa
 dag = get_dag_object(__file__, tags=["wip", "10"])  # noqa
 
 
