@@ -10,21 +10,18 @@ This repo contains:
 
 ## Contents
 
-1. High-Level Summary
-  * Template and Example DAGs
-  * Local Airflow Build Script
-  * CICD Unit Tests for Airflow (docs are WIP)
-2. Airflow Config `airflow.cfg`
+1. Template and Example DAGs
+2. Local Airflow Build Script
+3. CICD Unit Tests for Airflow (docs are WIP)
+4. Airflow Config `airflow.cfg`
 
 ---
 
-## 1. High-Level Summary
-
-### Template and Example DAGs
+### 1. Template and Example DAGs
 
 See the parent folder `dags` for a collection of template & example DAGs that I've collated over time.
 
-### Local Airflow Build Script
+### 2. Local Airflow Build Script
 
 * See `Makefile` at the project root
 * This `Makefile` provides a simple way of creating a local install of Airflow.
@@ -32,7 +29,7 @@ See the parent folder `dags` for a collection of template & example DAGs that I'
   * Edit the input args listed in `ip/config.json`'
   * Then run `make`!
 
-### CICD Unit Tests for Airflow (docs are WIP)
+### 3. CICD Unit Tests for Airflow (docs are WIP)
 
 * See the parent folder `cicd_unit_tests_for_airflow`
 * This folder consists of all the files required to implement and trigger Airflow unit tests as part of any GitLab CI build
@@ -43,7 +40,7 @@ See the parent folder `dags` for a collection of template & example DAGs that I'
 
 ---
 
-## 2. Airflow Config `airflow.cfg`
+### 4. Airflow Config `airflow.cfg`
 
 Some of the Airflow config changes that I commonly make (and have made for the local build script) are listed below.
 
