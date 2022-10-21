@@ -1,4 +1,4 @@
-## Template DBT DAG
+## Template dbt DAG
 
 **Description**:    Reusable/cookie-cutter DAG for developing Airflow-DBT DAGs on the local AF2 instance
 
