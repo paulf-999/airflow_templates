@@ -1,46 +1,51 @@
-# Overview (local Airflow)
+# Airflow Templates
 
-Simple instructions for a local install of Airflow (see the `Makefile`).
+This repo contains:
 
-To create a local install of Airflow containing the prerequisite files, run `make`!
-
-Note: `template_dag` is also timezone-aware (i.e., uses the python module `pendulum`).
+* A collection of template and example Airflow DAGs I've collated over time.
+* As well as a (local) Airflow build script (see `Makefile`).
+* Scripts to implement CICD unit tests for Airflow DAGs (see `cicd_unit_tests_for_airflow`).
 
 ---
 
 ## Contents
 
-* How-to run
-    * Local Airflow install
-    * Running Airflow locally, post-install
-    * Scripted Airflow variable creation via CLI
-    * Scripted Airflow connection creation via CLI
+1. High-Level Summary
+  * Template and Example DAGs
+  * Local Airflow Build Script
+  * CICD Unit Tests for Airflow (docs are WIP)
+2. Airflow Config `airflow.cfg`
 
 ---
 
-## How-to run
+## 1. High-Level Summary
 
-### Local Airflow install
+### Template and Example DAGs
 
-To create a local install of Airflow containing the prerequisite files, run `make`!
+See the parent folder `dags` for a collection of template & example DAGs that I've collated over time.
+
+### Local Airflow Build Script
+
+* See `Makefile` at the project root
+* This `Makefile` provides a simple way of creating a local install of Airflow.
+* To create a local install of Airflow you need to:
+  * Edit the input args listed in `ip/config.json`'
+  * Then run `make`!
+
+### CICD Unit Tests for Airflow (docs are WIP)
+
+* See the parent folder `cicd_unit_tests_for_airflow`
+* This folder consists of all the files required to implement and trigger Airflow unit tests as part of any GitLab CI build
+* See `cicd_unit_tests_for_airflow/.gitlab-ci` for the commands/args used to:
+  * Launch an Airflow instance (in standalone mode) within a CI job
+  * Perform Airflow (pytest) unit tests
+* See `cicd_unit_tests_for_airflow/tests/` to see the code used for the pytests used for Airflow DAGs.
 
 ---
 
-#### Scripted Airflow variable creation via CLI
+## 2. Airflow Config `airflow.cfg`
 
-To create an Airflow variable, add / change the entries listed in the Makefile recipe `create_airflow_variables`
-
-#### Scripted Airflow connection creation via CLI
-
-To create an Airflow connection, add / change the entries listed in the Makefile recipe `create_airflow_connections`
-
-As well as containing a `Makefile` to script the install of a local Airflow instance, the `Makefile` shows the commands to script the creation of Airflow variables and connections.
-
----
-
-## Airflow config `airflow.cfg`
-
-Some of the Airflow config changes that have been applied include:
+Some of the Airflow config changes that I commonly make (and have made for the local build script) are listed below.
 
 Note: Many of these changes have been applied/come from [this Medium.com blog post](https://medium.com/@agordienko/apache-airflow-cheatsheet-205f82d6edda).
 
@@ -57,21 +62,3 @@ Note: Many of these changes have been applied/come from [this Medium.com blog po
 | min_file_process_interval | scheduler | Reduce the number of seconds Airflow waits to look for DAG changes. I set this to 5 for local dev work |
 | dag_dir_list_interval | scheduler | Same as the above, I set this to 5 for the same reason. |
 | catchup_by_default | scheduler | This value is set to `True` by default.  It means each time you unpause the DAG all the missed dagruns will start immediately. |
-
----
-
-## Todo
-
-* Investigate macros & parameters: https://marclamberti.com/blog/templates-macros-apache-airflow/
-
-1. Done - Fetch DAG metadata.
-2. Done - For a given DAG, get the corresponding TASK metadata
-3. Done - Create task groups
-4. Done - Create unit tests (see tests folder at project root)
-5. Not started - Use task decorators
-6. Airflow templates
-
-### Reading / links (note to self)
-
-https://marclamberti.com/blog/templates-macros-apache-airflow/
-https://stackoverflow.com/questions/46059161/airflow-how-to-pass-xcom-variable-into-python-function

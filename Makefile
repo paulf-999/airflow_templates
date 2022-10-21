@@ -53,7 +53,6 @@ clean:
 #############################################################################################
 # The two targets below are called by the above install target
 
-
 create_admin_user:
 	$(info [+] Create an admin user for Airflow)
 	@airflow users create \
