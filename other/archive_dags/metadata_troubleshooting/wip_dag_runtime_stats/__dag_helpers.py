@@ -1,13 +1,11 @@
-import os
 import logging
 from datetime import datetime
-from time import time
-import pendulum
+
 import humanfriendly
-from airflow.operators.python import get_current_context
+import pendulum
 from airflow.models.dagbag import DagBag
 from airflow.models.dagrun import DagRun
-from airflow.models.taskinstance import TaskInstance
+from airflow.operators.python import get_current_context
 
 # import snowflake.connector
 
@@ -111,7 +109,11 @@ def get_dag_runtime_stats(**kwargs):
             # update the DAG metadata in snowflake (i.e. the 'last_run' and 'next_run' values)
             # TODO: uncomment
             # cs.execute(
-            #     f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG (DAG_NAME, TARGET_TBL, DAG_SCHEDULE, LAST_DAG_RUN, NEXT_DAG_RUN, QUERY_TS) VALUES ('{runtime_stats_dict['dag']['dag_name']}', '{runtime_stats_dict['dag']['target_tbl']}', '{runtime_stats_dict['dag']['schedule_interval']}', '{runtime_stats_dict['dag']['last_dag_run']}', '{runtime_stats_dict['dag']['next_dag_run']}', current_timestamp());"
+            #     f"INSERT INTO {sf_db}.{sf_schema}.AIRFLOW_DAG (
+            # DAG_NAME, TARGET_TBL, DAG_SCHEDULE, LAST_DAG_RUN, NEXT_DAG_RUN, QUERY_TS)
+            # VALUES (
+            # '{runtime_stats_dict['dag']['dag_name']}', '{runtime_stats_dict['dag']['target_tbl']}', '{runtime_stats_dict['dag']['schedule_interval']}', '{runtime_stats_dict['dag']['last_dag_run']}', '{runtime_stats_dict['dag']['next_dag_run']}', current_timestamp()
+            #    );"
             # )
             # cleanse the date fields to remove the timezone '+00' str
             start_date = datetime.strptime(str(dag_run.start_date.astimezone(local_tz)).split("+")[0], "%Y-%m-%d %H:%M:%S.%f")
