@@ -1,7 +1,7 @@
 cryptography==35.0.0
-snowflake-connector-python
 humanfriendly
 pyarrow
+snowflake-connector-python
 #airflow-dbt
 #apache-airflow-providers-amazon --constraint ${CONSTRAINT_URL}
 #apache-airflow-providers-slack --constraint ${CONSTRAINT_URL}
