@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 """
-Python Version  : 3.8
-* Name          : template_dag.py
-* Description   : Boilerplate Airflow DAG.
-* Created       : 11-06-2021
+Python Version  : 3.10
+* Name          : read_ip_from_dag_conf.py
+* Description   : Read input from the DAG conf
+* Created       : 28-09-2022
 """
 
 __author__ = "Paul Fry"
 __version__ = "0.1"
 
+
 import os
-import sys
-import logging
-import importlib
-import pendulum
+from includes import common
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.dummy import DummyOperator
+import logging
 import json
 
 # Set up a specific logger with our desired output level
@@ -24,20 +23,12 @@ logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("airflow.task")
 logger.setLevel(logging.INFO)
 
-local_tz = pendulum.timezone("Australia/Melbourne")
+# Setup paths, import libraries and templates (seldom needs to change)
+dag_name, dag_helpers, sql_queries, doc_md, logger, local_tz, default_args = common.get_common_dag_vars(__file__)  # noqa
+
 dag_path = os.path.dirname(os.path.abspath(__file__))
 dag_name = os.path.basename(dag_path)
 dag_root = os.path.dirname(dag_path)
-
-if dag_root not in sys.path:
-    sys.path.append(dag_root)
-
-helpers = importlib.import_module(".__dag_helpers", package=dag_name)
-queries = importlib.import_module(".__sql_queries", package=dag_name)
-
-default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
-
-doc_md = helpers.try_render_readme(dag_path)
 
 
 def get_ips():
@@ -64,6 +55,6 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     ####################################################################
     # for each source table read in, trigger the 'child' DAG
     for x in get_ips():
-        trigger_sds_task = BashOperator(task_id=f"task_{x}", bash_command=f"echo '{x}'")
+        example_task = BashOperator(task_id=f"task_{x}", bash_command=f"echo '{x}'")
         # Graph
-        start_task >> trigger_sds_task >> end_task
+        start_task >> example_task >> end_task

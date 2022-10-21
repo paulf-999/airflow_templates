@@ -15,12 +15,8 @@ import sys
 import logging
 import importlib
 import pendulum
-from time import time
 from airflow import DAG
-from airflow.utils.dates import days_ago
 from airflow.utils.task_group import TaskGroup
-from airflow.models import Variable
-from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
 

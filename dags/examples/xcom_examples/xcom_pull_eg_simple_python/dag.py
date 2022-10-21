@@ -39,6 +39,35 @@ default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure"
 
 doc_md = helpers.try_render_readme(dag_path)
 
+
+def gen_op(**kwargs):
+    """generate sample op"""
+    START_TIME = time()
+    logger.debug("Function called: get_user_ips()")
+
+    eg_op = []
+
+    for i in range(0, 4):
+        eg_op.append(i)
+
+    logger.debug(f"Function finished: gen_op() finished in {round(time() - START_TIME, 2)} seconds")
+
+    return eg_op
+
+
+def read_op(**kwargs):
+    """read in sample op from subsequent step"""
+    START_TIME = time()
+    logger.debug("Function called: get_user_ips()")
+
+    ti = kwargs["ti"]
+    xcom_pull = ti.xcom_pull(task_ids="gen_op_eg")
+
+    logger.debug(f"Function finished: read_op() finished in {round(time() - START_TIME, 2)} seconds")
+
+    return xcom_pull
+
+
 with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
     ####################################################################
@@ -47,9 +76,11 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
+    gen_op_tsk = PythonOperator(task_id="gen_op_eg", python_callable=gen_op)
+
+    read_op_in_sub_tsk = PythonOperator(task_id="read_op_in_sub_task", python_callable=read_op)
 
 ####################################################################
 # DAG Lineage
 ####################################################################
-start_task >> hello_world_task >> end_task
+start_task >> gen_op_tsk >> read_op_in_sub_tsk >> end_task

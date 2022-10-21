@@ -15,8 +15,9 @@ import logging
 import importlib
 import pendulum
 from airflow import DAG
-from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
+from airflow.operators.bash import BashOperator
 
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
@@ -34,43 +35,31 @@ if dag_root not in sys.path:
 helpers = importlib.import_module(".__dag_helpers", package=dag_name)
 queries = importlib.import_module(".__sql_queries", package=dag_name)
 
-# fmt: off
-default_args = {
-    "owner": "airflow",
-    "depends_on_past": False,
-    "email_on_failure": False,
-    "email_on_retry": False,
-    "start_date": pendulum.now(local_tz).subtract(days=1)
-}
-# fmt: on
 
-dbt_project_dir = "<PATH TO DBT_PROJECT_FOLDER>"
+def write_op():
+
+    cmd = "example cmd"
+
+    return cmd
+
+
+default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 doc_md = helpers.try_render_readme(dag_path)
 
-# fmt: off
-with DAG(
-        dag_id=os.path.basename(__file__).replace(".py", ""),
-        default_args=default_args,
-        schedule_interval=None,
-        tags=["template"]
-) as dag:
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
-    # fmt: on
     ####################################################################
     # DAG Operators
     ####################################################################
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    # fmt: off
-    dbt_command = BashOperator(
-        task_id="dbt_conn_test",
-        bash_command=f"set -e; cd {dbt_project_dir}; dbt debug --profiles-dir profiles"
-    )
-    # fmt: on
+    py_op_eg = PythonOperator(task_id="py_op_eg", python_callable=write_op)
+
+    xcom_pull_eg = BashOperator(task_id="xcom_pull_eg", bash_command="echo '{{ ti.xcom_pull(task_ids='py_op_eg') }}'")
 
 ####################################################################
 # DAG Lineage
 ####################################################################
-start_task >> dbt_command >> end_task
+start_task >> py_op_eg >> xcom_pull_eg >> end_task

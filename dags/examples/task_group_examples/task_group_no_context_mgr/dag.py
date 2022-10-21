@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Python Version  : 3.10
-* Name          : dynamic_tasks_example.py
-* Description   : Example showing how to generate DAG tasks dynamically
+Python Version  : 3.8
+* Name          : template_dag.py
+* Description   : Boilerplate Airflow DAG.
 * Created       : 11-06-2021
 """
 
 __author__ = "Paul Fry"
-__version__ = "1.0"
+__version__ = "0.1"
 
 import os
 import sys
@@ -46,10 +46,9 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    for i in range(5):
-        hello_world_task = PythonOperator(task_id=f"hello_world_task_{i}", python_callable=helpers.hello_world)
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
 
-        ####################################################################
-        # DAG Lineage
-        ####################################################################
-        start_task >> hello_world_task >> end_task
+####################################################################
+# DAG Lineage
+####################################################################
+start_task >> hello_world_task >> end_task

@@ -1,5 +1,6 @@
 import os
 import re
+
 import pendulum
 from airflow.operators.python import get_current_context
 
@@ -28,7 +29,7 @@ def gen_metadata(**kwargs):
     run_id = context["run_id"]
     task_id = context["ti"].task_id
     job_id = context["ti"].job_id
-    state = context["ti"].state
+    # state = context["ti"].state
     dag_run = context["dag_run"]
     dag_run_start_date = context["dag_run"].start_date
 
