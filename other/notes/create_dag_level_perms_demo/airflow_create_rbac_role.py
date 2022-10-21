@@ -1,6 +1,7 @@
-from typing import List
-import requests
 import argparse
+from typing import List
+
+import requests
 
 
 def create_rbac_role_with_permissions(

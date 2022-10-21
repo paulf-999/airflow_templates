@@ -7,7 +7,7 @@ Follow this for good instructions on the steps required to:
 https://towardsdatascience.com/integrating-docker-airflow-with-slack-to-get-daily-reporting-c462e7c8828a
 
 ### Re: 'Step 4: DAG Definition' and the webhook_token
-(lifted from: https://www.reddit.com/r/dataengineering/comments/k67u5d/not_getting_slack_notifications_when_dags_fail/gv8ausz/) 
+(lifted from: https://www.reddit.com/r/dataengineering/comments/k67u5d/not_getting_slack_notifications_when_dags_fail/gv8ausz/)
 
 The examples often don't really say what part of the webhook token is required in the below:
 
@@ -38,7 +38,7 @@ Conn Type: HTTP
 Host: https://hooks.slack.com/services
 Password: /T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
 
-- Hit Create and fill the fields accordingly. 
+- Hit Create and fill the fields accordingly.
 - For the Slack connection (important), use the following details:
 
 conn_id = slack_connection (string value)

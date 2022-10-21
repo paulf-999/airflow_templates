@@ -1,9 +1,9 @@
-from contextlib import contextmanager
 import logging
 from datetime import datetime
 
 from airflow.models import BaseOperator
-from pendulum import timezone, now
+from pendulum import now
+from pendulum import timezone
 
 logging.basicConfig(format="%(message)s")
 logger = logging.getLogger("application_logger")
