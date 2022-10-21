@@ -1,4 +1,45 @@
-.python-version
-.DS_Store
+# Airflow files
 airflow.log
+
+# Common credential files
+*.p8
+*creds*
+
+# Private Files
+*.json
+*.csv
+*.csv.gz
+*.tsv
+*.tsv.gz
+*.xlsx
+
+# Mac/OSX
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
+
+
+# Distribution / packaging
+dist/
+downloads/
+
+# Unit test / coverage reports
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid

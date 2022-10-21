@@ -14,7 +14,6 @@ import sys
 import logging
 import importlib
 import pendulum
-from time import time
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.dummy import DummyOperator
