@@ -1,6 +1,6 @@
 ## Airflow DAG Template
 
-This diretory describes the template Airflow DAG file/folder structure, as well as conventions used.
+This directory describes the template Airflow DAG file/folder structure, as well as conventions used.
 
 Where the purpose of each of the files within the template are as follows:
 
