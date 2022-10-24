@@ -1,4 +1,10 @@
-## Airflow DAG Template
+## Template 'get_dag_runtime_stats' DAG
+
+**Description**:    Template DAG to retrieve Airflow runtime stats at both the DAG and task-level.
+
+**Date Created**:   24-11-2022
+
+### Folder Contents
 
 This directory describes the template Airflow DAG file/folder structure, as well as conventions used.
 
