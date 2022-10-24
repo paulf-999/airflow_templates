@@ -2,8 +2,9 @@
 """
 Python Version  : 3.8
 * Name          : template_dag.py
-* Description   : Boilerplate Airflow DAG.
-* Created       : 11-06-2021
+* Description   : Boilerplate Airflow task group script, w/o a context manager
+*                 Reference: http://airflow.apache.org/docs/apache-airflow/2.0.1/_modules/airflow/example_dags/example_task_group.html
+* Created       : 24-10-2022
 """
 
 __author__ = "Paul Fry"
@@ -11,17 +12,12 @@ __version__ = "0.1"
 
 import os
 import sys
-import logging
 import importlib
 import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
-
-# Set up a specific logger with our desired output level
-logging.basicConfig(format="%(message)s")
-logger = logging.getLogger("airflow.task")
-logger.setLevel(logging.INFO)
+from airflow.utils.task_group import TaskGroup
 
 local_tz = pendulum.timezone("Australia/Melbourne")
 dag_path = os.path.dirname(os.path.abspath(__file__))
@@ -38,17 +34,22 @@ default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure"
 
 doc_md = helpers.try_render_readme(dag_path)
 
+
 with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
 
-    ####################################################################
-    # DAG Operators
-    ####################################################################
-    start_task = DummyOperator(task_id="start")
-    end_task = DummyOperator(task_id="end")
+    # airflow tasks groups
+    tg_parent_task_group = TaskGroup(group_id="tg_parent_task_group", dag=dag)
+    tg_example = TaskGroup(group_id="create_stg_div__customer_views", parent_group=tg_parent_task_group, dag=dag)
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
+    # DAG tasks
+    start_task = DummyOperator(task_id="start", task_group=tg_example)
+    end_task = DummyOperator(task_id="end", task_group=tg_example)
+
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world, task_group=tg_parent_task_group)
 
 ####################################################################
 # DAG Lineage
 ####################################################################
-start_task >> hello_world_task >> end_task
+
+# note - you can reference the tg in the DAG lineage
+start_task >> tg_parent_task_group >> end_task
