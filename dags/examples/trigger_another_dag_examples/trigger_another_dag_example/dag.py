@@ -39,13 +39,13 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 
-with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["example", "trigger_another_dag"]) as dag:
 
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)
     end_task = DummyOperator(task_id="end", dag=dag)
 
-    trigger = TriggerDagRunOperator(task_id="trigger_dagrun", trigger_dag_id="template_dag", conf={"param1": "abc", "param2": "xyz"})
+    trigger = TriggerDagRunOperator(task_id="trigger_dagrun", trigger_dag_id="template_dag")
 
 # graph
 start_task >> trigger >> end_task

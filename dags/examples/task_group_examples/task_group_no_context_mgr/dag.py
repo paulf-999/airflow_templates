@@ -3,7 +3,7 @@
 Python Version  : 3.8
 * Name          : template_dag.py
 * Description   : Boilerplate Airflow task group script, w/o a context manager
-*                 Reference: http://airflow.apache.org/docs/apache-airflow/2.0.1/_modules/airflow/example_dags/example_task_group.html
+*                 Reference: https://marclamberti.com/blog/airflow-taskgroups-all-you-need-to-know/
 * Created       : 24-10-2022
 """
 
@@ -35,11 +35,11 @@ default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure"
 doc_md = helpers.try_render_readme(dag_path)
 
 
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["example", "task_groups"]) as dag:
 
     # airflow tasks groups
     tg_parent_task_group = TaskGroup(group_id="tg_parent_task_group", dag=dag)
-    tg_example = TaskGroup(group_id="create_stg_div__customer_views", parent_group=tg_parent_task_group, dag=dag)
+    tg_example = TaskGroup(group_id="tg_child_task_group", parent_group=tg_parent_task_group, dag=dag)
 
     # DAG tasks
     start_task = DummyOperator(task_id="start", task_group=tg_example)
@@ -51,5 +51,4 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
 # DAG Lineage
 ####################################################################
 
-# note - you can reference the tg in the DAG lineage
-start_task >> tg_parent_task_group >> end_task
+start_task >> hello_world_task >> end_task

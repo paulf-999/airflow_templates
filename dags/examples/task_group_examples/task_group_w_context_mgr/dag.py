@@ -2,7 +2,7 @@
 """
 Python Version  : 3.7
 * Name          : template_dag.py
-* Description   : Boilerplate Airflow task group script. Reference: http://airflow.apache.org/docs/apache-airflow/2.0.1/_modules/airflow/example_dags/example_task_group.html
+* Description   : Boilerplate Airflow task group script. Reference: https://marclamberti.com/blog/airflow-taskgroups-all-you-need-to-know/
 * Created       : 11-06-2021
 * Usage         : python3 task_group_eg.py
 """
@@ -40,7 +40,7 @@ queries = importlib.import_module(".__sql_queries", package=dagname)
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 
-with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dagname, default_args=default_args, schedule_interval=None, tags=["example", "task_groups"]) as dag:
 
     # operators here, e.g.:
     start_task = DummyOperator(task_id="start", dag=dag)

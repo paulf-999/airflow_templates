@@ -38,7 +38,7 @@ default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure"
 
 doc_md = helpers.try_render_readme(dag_path)
 
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["example", "dynamic_tasks"]) as dag:
 
     ####################################################################
     # DAG Operators

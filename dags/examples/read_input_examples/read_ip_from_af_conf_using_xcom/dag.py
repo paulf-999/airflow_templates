@@ -58,11 +58,18 @@ def read_from_task_op_eg():
     return cmd
 
 
+def generate_task_op_eg():
+
+    cmd = "example cmd"
+
+    return cmd
+
+
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 doc_md = helpers.try_render_readme(dag_path)
 
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["example", "read_ip"]) as dag:
 
     ####################################################################
     # DAG Operators
@@ -70,7 +77,7 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    get_input = PythonOperator(task_id="get_input", python_callable=read_from_task_op_using_xcom_pull_eg)
+    get_input = PythonOperator(task_id="get_input", python_callable=generate_task_op_eg)
 
     # py_op_eg = PythonOperator(task_id="py_op_eg", python_callable=read_from_task_op_eg)
 

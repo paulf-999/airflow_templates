@@ -42,7 +42,7 @@ def get_ips():
     return ip_list
 
 
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["example"]) as dag:
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["example", "read_ip"]) as dag:
 
     ####################################################################
     # DAG Operators
