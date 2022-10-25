@@ -33,9 +33,6 @@ deps: get_ips
 #############################################################################################
 get_ips:
 	@# Target: 'get_ips'. Get input args from config.yaml
-	$(eval AIRFLOW_VERSION=$(shell yq '.airflow_args.airflow_version | select( . != null )' ${CONFIG_FILE}))
-	$(eval PYTHON_VERSION=$(shell yq '.airflow_args.python_version | select( . != null )' ${CONFIG_FILE}))
-	$(eval CONSTRAINT_URL=$(shell yq '.airflow_args.constraints_url | select( . != null )' ${CONFIG_FILE}))
 	$(eval AIRFLOW_HOME_DIR=$(shell yq '.airflow_args.airflow_home_dir | select( . != null )' ${CONFIG_FILE}))
 	$(eval ADMIN_PASS=$(shell yq '.airflow_args.admin_pass | select( . != null )' ${CONFIG_FILE}))
 	$(eval USER_DEMO_PASS=$(shell yq '.airflow_args.user_demo_pass | select( . != null )' ${CONFIG_FILE}))
@@ -44,14 +41,6 @@ validate_user_ip: get_ips
 	@echo "------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------"
-	# INFO: Verify the user has provided a value for the key 'env' in ip/config.yaml
-	@[ "${ENV}" ] || ( echo "\nError: 'ENV' key is empty in ip/config.yaml\n"; exit 1 )
-	# INFO: Verify the user has provided a value for the key 'AIRFLOW_VERSION' in ip/config.yaml
-	@[ "${AIRFLOW_VERSION}" ] || ( echo "\nError: 'AIRFLOW_VERSION' key is empty in ip/config.yaml\n"; exit 1 )
-	# INFO: Verify the user has provided a value for the key 'PYTHON_VERSION' in ip/config.yaml
-	@[ "${PYTHON_VERSION}" ] || ( echo "\nError: 'PYTHON_VERSION' key is empty in ip/config.yaml\n"; exit 1 )
-	# INFO: Verify the user has provided a value for the key 'CONSTRAINT_URL' in ip/config.yaml
-	@[ "${CONSTRAINT_URL}" ] || ( echo "\nError: 'CONSTRAINT_URL' key is empty in ip/config.yaml\n"; exit 1 )
 	# INFO: Verify the user has provided a value for the key 'AIRFLOW_HOME_DIR' in ip/config.yaml
 	@[ "${AIRFLOW_HOME_DIR}" ] || ( echo "\nError: 'AIRFLOW_HOME_DIR' key is empty in ip/config.yaml\n"; exit 1 )
 
