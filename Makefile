@@ -1,5 +1,3 @@
-SHELL := /bin/bash
-
 # Usage:
 # make installations	# install the package for the first time, managing dependencies & performing a housekeeping cleanup too
 # make deps		# just install the dependencies
@@ -18,36 +16,17 @@ PIP_INSTALL_CMD=pip3 freeze -q --disable-pip-version-check
 COLOUR_TXT_FMT_OPENING := \033[0;33m
 COLOUR_TXT_FMT_CLOSING := \033[0m
 
-installations: deps install clean
-
-create_env:
-	( \
-	virtualenv -p python3 venv; \
-	)
-
-hey: create_env
-	@virtualenv -p python3 venv; \
-	source venv/bin/activate; \
-	pip install -r requirements.txt; \
-
-a:
-	rm -rf /venv
-	make -s deps
-	make -s install
-
-b: get_ips
-	rm -rf ./venv
-	@virtualenv -p python3 venv; \
-	source venv/bin/activate; \
-	pip3 install apache-airflow; \
+installations: clean deps install
 
 deps: get_ips
 	@echo "----------------------------------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
 	@echo "----------------------------------------------------------------------------------------------------------------------"
-	virtualenv -p python3 venv; \
+	@make -s clean
+	@virtualenv -p python3 venv; \
 	source venv/bin/activate; \
-	pip3 install -q -r requirements.txt; \
+	pip3 install apache-airflow[cncf.kubernetes]; \
+	pip3 install -r requirements.txt; \
 
 ############################################################################################
 # Setup/validation targets: 'get_ips'
@@ -81,32 +60,45 @@ install: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'install'. Run the setup and install targets.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------"
 	# remove the previously generated venv
-	rm -rf ./venv
-	# previous installs of Airflow can conflict the metadata db, so reset the metadata just in case
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Previous installs of Airflow can conflict the metadata db, so reset the metadata just in case.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	@airflow db reset
-	# Initialize the airflow db
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Initialize the airflow db.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	@airflow db init
 	@sleep 10
-	# copy over the predefined airflow config
-	# TODO - uncomment this
-	#@cp ip/airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
-	# Create the admin user
-	@make create_admin_user
-	# create example 'read-only' and 'creator' users
-	@make create_ro_user_example
-	@make create_creator_user_example
-	# start the airflow scheduler & webserver using a daemon process (i.e., the -D option)
-	# open a new terminal or else run webserver with `-D` option to run it as a daemon
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Copy over the predefined airflow config.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@cp ip/airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Create an Airflow admin user.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@make -s create_admin_user
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Create example 'read-only' and 'creator' users.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@make -s create_ro_user_example
+	@make -s create_creator_user_example
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Start the airflow scheduler & webserver using a daemon process (i.e., the -D option).${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	@airflow webserver -D
 	@airflow scheduler -D
-	# visit localhost:8080 in the browser and use the admin account just created to login
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING} Finished! Open up localhost:8080 in a web browser and use the admin account just created to login.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 
 #############################################################################################
 # Airflow-specific targets
 #############################################################################################
 # The two targets below are called by the above install target
 create_admin_user: get_ips
-	$(info [+] Create an admin user for Airflow)
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'create_admin_user'. Create an admin user for Airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	@airflow users create \
 		--username pfry \
 		--password ${ADMIN_PASS} \
@@ -116,7 +108,9 @@ create_admin_user: get_ips
 		--email spiderman@superhero.org
 
 create_ro_user_example: get_ips
-	$(info [+] Create user & assign them the 'user' role in Airflow)
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'create_ro_user_example'. Create user & assign them the 'user' role in Airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	@airflow users create \
 		--username read_only_demo \
 		--password ${USER_DEMO_PASS} \
@@ -126,7 +120,9 @@ create_ro_user_example: get_ips
 		--email read_only_demo@test.com
 
 create_creator_user_example: get_ips
-	$(info [+] Create user & assign them the 'user' role in Airflow)
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'create_creator_user_example'. Create user & assign them the 'user' role in Airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	@airflow users create \
 		--username creator_demo \
 		--password ${USER_DEMO_PASS} \
@@ -148,6 +144,9 @@ add_user_to_role:
 # Custom-Airflow targets
 #############################################################################################
 trigger_dag:
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'trigger_dag'. Trigger an Airflow DAG.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	$(info [+] Trigger an Airflow DAG)
 	@airflow dags trigger dbt_dag
 
@@ -159,21 +158,18 @@ trigger_dag_w_ip:
 # Drop Airflow instance
 #############################################################################################
 debug:
-	# use this if you need to reinstall airflow
-	#@ airflow db reset
-	@ rm -r ~/airflow/
-	@ rm ~/airflow/airflow.db
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'debug'. Use this if you need to reinstall airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@sudo rm -rf ${AIRFLOW_HOME}
 
 kill_af_scheduler_and_webserver:
-	# stop the Airflow scheduler & webserver
-	@cat ~/airflow/airflow-scheduler.pid | xargs kill
-	@cat ~/airflow/airflow-webserver.pid | xargs kill
+	# find the (Airflow) process pids and (manually) kill them
 	#@lsof -i tcp:8080
-	@#...and then kill pid
+	@# kill the relevant pid
 
 clean:
 	@echo "------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------"
 	@rm -rf ./venv
-	@find -iname "*.pyc" -delete
