@@ -1,8 +1,0 @@
-{
-    "airflow_args": {
-        "airflow_version": "2.2.0",
-        "python_version": "3.7",
-        "constraints_url": "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt",
-        "airflow_home_dir": "~/airflow/"
-    }
-}

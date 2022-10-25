@@ -1,1 +1,1 @@
-yq
+humanfriendly
