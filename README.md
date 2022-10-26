@@ -46,16 +46,16 @@ Some of the Airflow config changes that I commonly make (and have made for the l
 
 Note: Many of these changes have been applied/come from [this Medium.com blog post](https://medium.com/@agordienko/apache-airflow-cheatsheet-205f82d6edda).
 
-| Config change | Config section | Description                  |
-| -------| -----------------------------| ---- |
-| dags_folder | core | To obviously point to the correct DAGs folder! |
-| default_timezone | core | To use the local/desired timezone, as opposed to UTC |
-| load_examples | core | This is set to `False` to prevent loading the examples |
-| hide_sensitive_variable_fields | core | This is set to `True` to hide values from some variables. |
-| colored_console_log | logging | This is set to `False` to help resolve some Airflow logging errors produced |
-| auth_backend | api | For local dev purposes, this is set to basic_auth. This allows API calls to be made without needing to generate tokens |
-| default_ui_timezone | webserver | Similar to the 2nd point, this ensures the time used on the UI uses this timezone rather than UTC time |
-| dag_default_view | webserver | I use the graph! Saves an extra click |
-| min_file_process_interval | scheduler | Reduce the number of seconds Airflow waits to look for DAG changes. I set this to 5 for local dev work |
-| dag_dir_list_interval | scheduler | Same as the above, I set this to 5 for the same reason. |
-| catchup_by_default | scheduler | This value is set to `True` by default.  It means each time you unpause the DAG all the missed dagruns will start immediately. |
+| Config change                    | Config section | Value | Description |
+| ---------------------------------| ---------------| ----  | ---- |
+| dags_folder                      | core           | <path to your dags folder> |To obviously point to the correct DAGs folder! |
+| default_timezone                 | core           | <desired_timezone> | To use the local/desired timezone, as opposed to UTC. |
+| load_examples                    | core           | `False` | Set to `False` to prevent loading the examples. |
+| hide_sensitive_variable_fields   | core           | `True` | Set to `True` to hide values from some variables. |
+| colored_console_log              | logging        | `False` | Set to `False` to help resolve some Airflow logging errors produced. |
+| auth_backend                     | api            | `basic_auth` | For local dev purposes, this is set to basic_auth. This allows API calls to be made without needing to generate tokens. |
+| default_ui_timezone              | webserver      | <desired_timezone> | Similar to the 2nd point, this ensures the time used on the UI uses this timezone rather than UTC time. |
+| dag_default_view                 | webserver      | `graph` | I use the graph! Saves an extra click. |
+| min_file_process_interval        | scheduler      | `5` | Reduce the number of seconds Airflow waits to look for DAG changes. I set this to 5 for local dev work. |
+| dag_dir_list_interval            | scheduler      | `5` | Same as the above, I set this to 5 for the same reason. |
+| catchup_by_default               | scheduler      | `False` | Set to `False` as by default, it is set to `True`. Setting it to true means each time you unpause the DAG all the missed dagruns will start immediately. |
