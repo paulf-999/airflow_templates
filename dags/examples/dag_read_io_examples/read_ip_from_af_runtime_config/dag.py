@@ -17,7 +17,6 @@ import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
-from airflow.operators.bash import BashOperator
 from airflow.operators.python import get_current_context
 
 # Set up a specific logger with our desired output level
@@ -51,20 +50,6 @@ def read_from_task_op_using_xcom_pull_eg():
     return payload, division, src_tbl
 
 
-def read_from_task_op_eg():
-
-    cmd = "example cmd"
-
-    return cmd
-
-
-def generate_task_op_eg():
-
-    cmd = "example cmd"
-
-    return cmd
-
-
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
 
 doc_md = helpers.try_render_readme(dag_path)
@@ -77,14 +62,9 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    get_input = PythonOperator(task_id="get_input", python_callable=generate_task_op_eg)
-
-    # py_op_eg = PythonOperator(task_id="py_op_eg", python_callable=read_from_task_op_eg)
-
-    xcom_pull_eg = BashOperator(task_id="xcom_pull_eg", bash_command="echo '{{ ti.xcom_pull(task_ids='get_input') }}'")
-
+    get_input = PythonOperator(task_id="get_input", python_callable=read_from_task_op_using_xcom_pull_eg)
 
 ####################################################################
 # DAG Lineage
 ####################################################################
-start_task >> get_input >> xcom_pull_eg >> end_task
+start_task >> get_input >> end_task
