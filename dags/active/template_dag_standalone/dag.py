@@ -11,34 +11,57 @@ __version__ = "1.0"
 
 import os
 import sys
-import logging
 import importlib
 import pendulum
+from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
-# Set up a specific logger with our desired output level
-logging.basicConfig(format="%(message)s")
-logger = logging.getLogger("airflow.task")
-logger.setLevel(logging.INFO)
 
+def setup_file_paths():
+    """Setup and import the filepaths"""
+    dag_path = os.path.dirname(os.path.abspath(__file__))
+    dag_name = os.path.basename(dag_path)
+    dag_root = os.path.dirname(dag_path)
+
+    if dag_root not in sys.path:
+        sys.path.append(dag_root)
+
+    return dag_path, dag_name, dag_root
+
+
+# filepath setup
+dag_path, dag_name, dag_root = setup_file_paths()
+
+# to improve code readability, Python code is silo'd away in py_helpers
+py_helpers = importlib.import_module(".__dag_helpers", package=dag_name)
+# similarly for better code readability, SQL code is silo'd away in sql_queries
+sql_queries = importlib.import_module(".__sql_queries", package=dag_name)
+
+# set local timezone
 local_tz = pendulum.timezone("Australia/Melbourne")
-dag_path = os.path.dirname(os.path.abspath(__file__))
-dag_name = os.path.basename(dag_path)
-dag_root = os.path.dirname(dag_path)
 
-if dag_root not in sys.path:
-    sys.path.append(dag_root)
+# attempt to render README file if it exists
+doc_md = py_helpers.try_render_readme(dag_path)
 
-helpers = importlib.import_module(".__dag_helpers", package=dag_name)
-queries = importlib.import_module(".__sql_queries", package=dag_name)
+default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False}
 
-default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False, "start_date": pendulum.now(local_tz).subtract(days=1)}
-
-doc_md = helpers.try_render_readme(dag_path)
-
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+with DAG(
+    dag_name,
+    description="Template DAG - standalone version",
+    doc_md=doc_md,  # try to render any potential README.md file within the DAG repo as the README for the DAG
+    default_args=default_args,
+    start_date=pendulum.now(local_tz).subtract(days=1),
+    schedule_interval=None,  # TODO - update `schedule_interval`
+    # TODO - update `dagrun_timeout`
+    # best practice is to provide a value for `dagrun_timeout`
+    # by default a value isn't provided.
+    # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
+    dagrun_timeout=timedelta(minutes=10),
+    catchup=False,  # best practice is to set this value to false. As otherwise, Airflow will try to trigger all pending dagruns.
+    tags=["template"]
+) as dag:
 
     ####################################################################
     # DAG Operators
@@ -46,7 +69,7 @@ with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_int
     start_task = DummyOperator(task_id="start")
     end_task = DummyOperator(task_id="end")
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
+    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=py_helpers.hello_world)
 
 ####################################################################
 # DAG Lineage
