@@ -45,14 +45,17 @@ local_tz = pendulum.timezone("Australia/Melbourne")
 # attempt to render README file if it exists
 doc_md = py_helpers.try_render_readme(dag_path)
 
+# default/shared parameters used by all DAGs
 default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False}
 
 with DAG(
     dag_name,
-    description="Template DAG - standalone version",
+    description="Template Airflow DAG - standalone version",
     doc_md=doc_md,  # try to render any potential README.md file within the DAG repo as the README for the DAG
     default_args=default_args,
-    start_date=pendulum.now(local_tz).subtract(days=1),
+    # note, re: 'dag execution' using the `start_date` & `schedule_interval` params.
+    # A DAG is triggered after the `start_date` AND the `schedule_interval`.
+    start_date=pendulum.now(local_tz),
     schedule_interval=None,  # TODO - update `schedule_interval`
     # TODO - update `dagrun_timeout`
     # best practice is to provide a value for `dagrun_timeout`

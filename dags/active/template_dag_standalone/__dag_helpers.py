@@ -2,7 +2,7 @@ import logging
 import os
 
 
-def get_logger():
+def setup_logging():
     """Set up a specific logger with our desired output level"""
     logging.basicConfig(format="%(message)s")
     logger = logging.getLogger("airflow.task")

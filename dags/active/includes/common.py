@@ -10,7 +10,7 @@ local_tz = pendulum.timezone("Australia/Melbourne")
 
 
 def get_common_dag_vars(ip_calling_dag):
-    """retrieve commononly used/shared variables"""
+    """retrieve commonly used/shared variables"""
 
     # Setup and import the filepaths used
     dag_path = os.path.dirname(os.path.abspath(ip_calling_dag))  # filepath of the DAG
