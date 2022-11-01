@@ -51,8 +51,8 @@ Note: Many of these changes have been applied/come from [this Medium.com blog po
 | dags_folder                      | core           | <path to your dags folder> |To obviously point to the correct DAGs folder! |
 | default_timezone                 | core           | <desired_timezone> | To use the local/desired timezone, as opposed to UTC. |
 | load_examples                    | core           | `False` | Set to `False` to prevent loading the examples. |
-| hide_sensitive_variable_fields   | core           | `True` | Set to `True` to hide values from some variables. |
-| colored_console_log              | logging        | `False` | Set to `False` to help resolve some Airflow logging errors produced. |
+| hide_sensitive_variable_fields   | core           | `True` | Set to `True` to prevent the value of a variable from beong displayed. |
+| colored_console_log              | logging        | `False` | Set to `False` to help resolve Airflow logging errors. |
 | auth_backend                     | api            | `basic_auth` | For local dev purposes, this is set to basic_auth. This allows API calls to be made without needing to generate tokens. |
 | default_ui_timezone              | webserver      | <desired_timezone> | Similar to the 2nd point, this ensures the time used on the UI uses this timezone rather than UTC time. |
 | dag_default_view                 | webserver      | `graph` | I use the graph! Saves an extra click. |

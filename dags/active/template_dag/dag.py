@@ -24,16 +24,14 @@ with DAG(
     description="Template Airflow DAG",
     doc_md=doc_md,  # try to render any potential README.md file within the DAG repo as the README for the DAG
     default_args=default_args,
-    # note, re: 'dag execution' using the `start_date` & `schedule_interval` params.
-    # A DAG is triggered after the `start_date` AND the `schedule_interval`.
+    # note, re: dag exectution - a dag run is triggered after the `start_date`+`schedule_interval`.
     start_date=pendulum.now(local_tz),
     schedule_interval=None,  # TODO - update `schedule_interval`
     # TODO - update `dagrun_timeout`
-    # best practice is to provide a value for `dagrun_timeout`
-    # by default a value isn't provided.
+    # best practice is to provide a value for `dagrun_timeout` as by default a value isn't provided.
     # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
     dagrun_timeout=timedelta(minutes=10),
-    catchup=False,  # best practice is to set this value to false. As otherwise, Airflow will try to trigger all pending dagruns.
+    catchup=False,  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
     tags=["template"]
 ) as dag:
 
