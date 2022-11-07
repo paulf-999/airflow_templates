@@ -21,14 +21,14 @@ dag_name, dag_helpers, sql_queries, doc_md, logger, local_tz, default_args = com
 
 with DAG(
     dag_name,
-    description="Template Airflow DAG",
-    doc_md=doc_md,  # try to render any potential README.md file within the DAG repo as the README for the DAG
     default_args=default_args,
-    start_date=pendulum.now(local_tz),  # note, re: dag exectution - a dag run is triggered after the `start_date`+`schedule_interval`.
+    description="Template Airflow DAG",  # TODO - update description
+    tags=["template"],  # TODO - update tags
     schedule_interval=None,  # TODO - update `schedule_interval`
+    start_date=pendulum.now(local_tz),  # note, re: dag execution - a dag run is triggered after `start_date` + `schedule_interval`.
+    doc_md=doc_md,  # best practice - try to render any potential README.md within the DAG folder
     dagrun_timeout=timedelta(minutes=10),  # best practice: use this to indicate the dagrun timout, as the default value is 0.
-    catchup=False,  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
-    tags=["template"]
+    catchup=False  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
 ) as dag:
 
     ####################################################################
