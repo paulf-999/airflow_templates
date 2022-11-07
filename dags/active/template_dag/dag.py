@@ -27,10 +27,8 @@ with DAG(
     # note, re: dag exectution - a dag run is triggered after the `start_date`+`schedule_interval`.
     start_date=pendulum.now(local_tz),
     schedule_interval=None,  # TODO - update `schedule_interval`
-    # TODO - update `dagrun_timeout`
-    # best practice is to provide a value for `dagrun_timeout` as by default a value isn't provided.
-    # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
-    dagrun_timeout=timedelta(minutes=10),
+    # best practice: use `dagrun_timeout` to control the amount of time to allow for your DAG to run before failing.
+    dagrun_timeout=timedelta(minutes=10),  # by default a value isn't provided
     catchup=False,  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
     tags=["template"]
 ) as dag:
