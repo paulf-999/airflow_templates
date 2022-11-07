@@ -26,9 +26,9 @@ with DAG(
     tags=["template"],  # TODO - update tags
     schedule_interval=None,  # TODO - update `schedule_interval`
     start_date=pendulum.now(local_tz),  # note, re: dag execution - a dag run is triggered after `start_date` + `schedule_interval`.
-    doc_md=doc_md,  # best practice - try to render any potential README.md within the DAG folder
-    dagrun_timeout=timedelta(minutes=10),  # best practice: use this to indicate the dagrun timout, as the default value is 0.
-    catchup=False  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
+    doc_md=doc_md,  # best practice: try to render any potential README.md within the DAG folder
+    dagrun_timeout=timedelta(minutes=10),  # best practice: use this to indicate the dag run timeout, as the default value is 0.
+    catchup=False  # best practice: set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
 ) as dag:
 
     ####################################################################
