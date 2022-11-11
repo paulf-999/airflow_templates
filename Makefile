@@ -23,7 +23,6 @@ deps: get_ips
 	@make -s clean
 	@virtualenv -p python3 venv; \
 	source venv/bin/activate; \
-	pip3 install apache-airflow[cncf.kubernetes]; \
 	pip3 install -r requirements.txt; \
 
 ############################################################################################

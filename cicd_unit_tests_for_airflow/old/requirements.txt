@@ -1,0 +1,12 @@
+airflow-dbt
+apache-airflow-providers-amazon --constraint ${CONSTRAINT_URL}
+apache-airflow-providers-microsoft-mssql --constraint ${CONSTRAINT_URL}
+# the 2 below are for any db-related operations
+apache-airflow-providers-odbc --constraint ${CONSTRAINT_URL}
+apache-airflow-providers-slack --constraint ${CONSTRAINT_URL}
+apache-airflow-providers-snowflake --constraint ${CONSTRAINT_URL}
+cryptography==35.0.0
+humanfriendly
+pyarrow
+pytest # used for
+snowflake-connector-python
