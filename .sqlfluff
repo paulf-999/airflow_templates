@@ -1,17 +1,39 @@
 [sqlfluff]
 dialect = snowflake
-#templater = dbt
+# templater = dbt
 templater = jinja
 sql_file_exts = .sql,.sql.j2,.dml,.ddl
-
 # allow aliasing in from clauses and join conditions.
 exclude_rules = L031
 
 [sqlfluff:indentation]
 indented_joins = true
+indented_using_on = true
+template_blocks_indent = true
 
+[sqlfluff:layout:type:comma]
+line_position = leading
+
+[sqlfluff:templater]
+unwrap_wrapped_queries = true
+
+[sqlfluff:templater:dbt]
+# pass in the dbt project/cred details
+project_dir =
+profiles_dir =
+profile =
+
+[sqlfluff:templater:jinja]
+apply_dbt_builtins = true
+
+# Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
-comma_style = leading
+tab_space_size = 4
+max_line_length = 120
+indent_unit = space
+allow_scalar = true
+single_table_references = consistent
+unquoted_identifiers_policy = all
 
 [sqlfluff:rules:L010] # Inconsistent capitalisation of keywords.
 capitalisation_policy = upper
@@ -23,12 +45,3 @@ capitalisation_policy = upper
 select_clause_trailing_comma = forbid
 [sqlfluff:rules:L040] # Inconsistent capitalisation of boolean/null literal.
 capitalisation_policy = upper
-
-[sqlfluff:templater:dbt]
-# pass in our dbt project/cred details
-project_dir = dbt_cert/cert
-profiles_dir = dbt_cert/cert/profiles
-profile = cert
-
-[sqlfluff:templater:jinja]
-apply_dbt_builtins = True
