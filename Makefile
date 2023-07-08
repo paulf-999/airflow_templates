@@ -18,7 +18,7 @@ installations: clean deps install
 
 deps: get_ips
 	@echo "----------------------------------------------------------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
 	@echo "----------------------------------------------------------------------------------------------------------------------"
 	@make -s clean
 	@virtualenv -p python3 venv; \
@@ -35,56 +35,56 @@ get_ips:
 	$(eval USER_DEMO_PASS=$(shell yq '.airflow_args.user_demo_pass | select( . != null )' ${CONFIG_FILE}))
 
 validate_user_ip: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	# INFO: Verify the user has provided a value for the key 'AIRFLOW_HOME_DIR' in ip/config.yaml
 	@[ "${AIRFLOW_HOME_DIR}" ] || ( echo "\nError: 'AIRFLOW_HOME_DIR' key is empty in ip/config.yaml\n"; exit 1 )
 
 install: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'install'. Run the setup and install targets.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'install'. Run the setup and install targets.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	# remove the previously generated venv
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Previous installs of Airflow can conflict the metadata db, so reset the metadata just in case.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
-	@airflow db reset
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Initialize the airflow db.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Previous installs of Airflow can conflict the metadata db, so reset the metadata just in case.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@airflow db reset -y
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Initialize the airflow db.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@airflow db init
 	@sleep 10
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Copy over the predefined airflow config.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Copy over the predefined airflow config.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@cp ip/airflow.cfg	$(subst $\",,$(AIRFLOW_HOME_DIR))
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Create an Airflow admin user.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Create an Airflow admin user.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@make -s create_admin_user
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Create example 'read-only' and 'creator' users.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Create example 'read-only' and 'creator' users.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@make -s create_ro_user_example
 	@make -s create_creator_user_example
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Start the airflow scheduler & webserver using a daemon process (i.e., the -D option).${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Start the airflow scheduler & webserver using a daemon process (i.e., the -D option).${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@airflow webserver -D
 	@airflow scheduler -D
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING} Finished! Open up localhost:8080 in a web browser and use the admin account just created to login.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Finished! Open up localhost:8080 in a web browser and use the admin account just created to login.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 
 #############################################################################################
 # Airflow-specific targets
 #############################################################################################
 # The two targets below are called by the above install target
 create_admin_user: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'create_admin_user'. Create an admin user for Airflow.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'create_admin_user'. Create an admin user for Airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@airflow users create \
 		--username pfry \
 		--password ${ADMIN_PASS} \
@@ -94,27 +94,27 @@ create_admin_user: get_ips
 		--email spiderman@superhero.org
 
 create_ro_user_example: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'create_ro_user_example'. Create user & assign them the 'user' role in Airflow.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'create_ro_user_example'. Create user & assign them the 'public' role in Airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@airflow users create \
 		--username read_only_demo \
 		--password ${USER_DEMO_PASS} \
 		--firstname read_only_demo \
 		--lastname read_only_demo \
-		--role Viewer \
+		--role Public \
 		--email read_only_demo@test.com
 
 create_creator_user_example: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'create_creator_user_example'. Create user & assign them the 'user' role in Airflow.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'create_creator_user_example'. Create user & assign them the 'public' role in Airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@airflow users create \
 		--username creator_demo \
 		--password ${USER_DEMO_PASS} \
 		--firstname creator_demo \
 		--lastname creator_demo \
-		--role User \
+		--role Public \
 		--email creator_demo@test.com
 
 create_custom_role_example:
@@ -130,9 +130,9 @@ add_user_to_role:
 # Custom-Airflow targets
 #############################################################################################
 trigger_dag:
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'trigger_dag'. Trigger an Airflow DAG.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'trigger_dag'. Trigger an Airflow DAG.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	$(info [+] Trigger an Airflow DAG)
 	@airflow dags trigger dbt_dag
 
@@ -144,9 +144,9 @@ trigger_dag_w_ip:
 # Drop Airflow instance
 #############################################################################################
 debug:
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'debug'. Use this if you need to reinstall airflow.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'debug'. Use this if you need to reinstall airflow.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@sudo rm -rf ${AIRFLOW_HOME}
 
 kill_af_scheduler_and_webserver:
@@ -155,7 +155,7 @@ kill_af_scheduler_and_webserver:
 	@# kill the relevant pid
 
 clean:
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------------------"
 	@rm -rf ./venv
