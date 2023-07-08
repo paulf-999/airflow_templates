@@ -1,0 +1,7 @@
+---
+general_params:
+    dag_name: eg_jinja_generated_dag
+    schedule_interval: None
+    tags: [example_tag1, tag2]
+    timezone: Europe/Dublin
+    dagrun_timeout: timedelta(minutes=10)
