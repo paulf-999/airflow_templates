@@ -26,7 +26,7 @@ See the parent folder `dags` for a collection of template & example DAGs that I'
 * See `Makefile` at the project root
 * This `Makefile` provides a simple way of creating a local install of Airflow.
 * To create a local install of Airflow you need to:
-  * Edit the input args listed in `ip/config.json`'
+  * Edit the input args listed in `ip/config.json`
   * Then run `make installations`
 
 ### 3. CICD Unit Tests for Airflow (docs are WIP)

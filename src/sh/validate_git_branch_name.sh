@@ -9,23 +9,22 @@
 ##              follows the naming standard:
 ##              ^(feature|hotfix|release)\/[a-z0-9_]+$
 ##
-## Usage: ./validate_git_branch_name.sh <input git branch name>
+## Usage:       ./validate_git_branch_name.sh <input git branch name>
 ##
 #================================================================
 
 #=======================================================================
 # Variables
 #=======================================================================
-
 # determine the name of the local git branch name
 LOCAL_GIT_BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+
 # the regex for valid git branch names
 VALID_GIT_BRANCH_NAME="^(feature|hotfix|release)\/[a-z0-9_]+$"
 
 # setup colour formatting
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
 COLOUR_OFF='\033[0m' # Text Reset
 
 #=======================================================================
@@ -33,7 +32,9 @@ COLOUR_OFF='\033[0m' # Text Reset
 #=======================================================================
 
 # Validate the Git branch name used
-if [[ ! $LOCAL_GIT_BRANCH_NAME =~ $VALID_GIT_BRANCH_NAME ]]
+if [[ ! "$LOCAL_GIT_BRANCH_NAME" != "$VALID_GIT_BRANCH_NAME" ]]
+# note: the above works on a mac. The below works on Ubuntu
+# if [[ ! $LOCAL_GIT_BRANCH_NAME =~ $VALID_GIT_BRANCH_NAME ]]
 then
     echo
     echo -e "${RED}#############################################################################################"
