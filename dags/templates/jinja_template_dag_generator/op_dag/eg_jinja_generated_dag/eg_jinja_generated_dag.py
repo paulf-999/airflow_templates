@@ -14,11 +14,11 @@ import os
 import sys
 import logging
 import importlib
-import pendulum
 from datetime import timedelta
+import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.empty import DummyOperator
 
 
 # Set up a specific logger with our desired output level
@@ -28,6 +28,7 @@ logger.setLevel(logging.INFO)
 
 
 def hello_world(**kwargs):
+    """Example python function"""
     print("Hello world")
 
     return
@@ -50,7 +51,7 @@ dag_path, dag_root = setup_file_paths()
 # to improve code readability, Python code is silo'd away in py_helpers
 py_helpers = importlib.import_module(".__dag_helpers", package="eg_jinja_generated_dag")
 # similarly for better code readability, SQL code is silo'd away in sql_queries
-sql_queries = importlib.import_module(".__sql_queries", package="eg_jinja_generated_dag")
+sql_queries = importlib.import_module(".__sql_helpers", package="eg_jinja_generated_dag")
 
 # set local timezone
 local_tz = pendulum.timezone("Europe/Dublin")
@@ -59,32 +60,36 @@ local_tz = pendulum.timezone("Europe/Dublin")
 doc_md = py_helpers.try_render_readme(dag_path)
 
 # default/shared parameters used by all DAGs
-default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False}
-
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "email_on_failure": False,
+    "email_on_retry": False,
+}
 with DAG(
     "eg_jinja_generated_dag",
     description="Template Airflow DAG - standalone version",
     doc_md=doc_md,  # try to render any potential README.md file within the DAG repo as the README for the DAG
     default_args=default_args,
-    # note, re: dag exectution - a dag run is triggered after the `start_date`+`schedule_interval`.
+    # note, re: dag execution - a dag run is triggered after the `start_date`+`schedule_interval`.
     start_date=pendulum.now(local_tz),
-    schedule_interval=None,  # TODO - update `schedule_interval`
+    schedule_interval=None,
     catchup=False,  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
-    tags=["example_tag1", "tag2"],
-    # TODO - update `dagrun_timeout`
+    tags=['example_tag1', 'tag2'],
     # best practice is to provide a value for `dagrun_timeout` as by default a value isn't provided.
     # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
     dagrun_timeout=timedelta(minutes=10),
 ) as dag:
-    ####################################################################
-    # DAG Operators
-    ####################################################################
-    start_task = DummyOperator(task_id="start")
-    end_task = DummyOperator(task_id="end")
+
+    # -------------------------------------------------------------------
+    # DAG tasks
+    # -------------------------------------------------------------------
+    start_task = EmptyOperator(task_id="start")
+    end_task = EmptyOperator(task_id="end")
 
     hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=py_helpers.hello_world)
 
-####################################################################
-# DAG Lineage
-####################################################################
+# -------------------------------------------------------------------
+# Define task dependencies
+# -------------------------------------------------------------------
 start_task >> hello_world_task >> end_task

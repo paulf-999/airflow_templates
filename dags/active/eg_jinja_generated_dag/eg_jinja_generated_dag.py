@@ -28,6 +28,7 @@ logger.setLevel(logging.INFO)
 
 
 def hello_world(**kwargs):
+    """Example python function"""
     print("Hello world")
 
     return
@@ -65,7 +66,6 @@ default_args = {
     "email_on_failure": False,
     "email_on_retry": False,
 }
-
 with DAG(
     "eg_jinja_generated_dag",
     description="Template Airflow DAG - standalone version",
@@ -80,15 +80,17 @@ with DAG(
     # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
     dagrun_timeout=timedelta(minutes=10),
 ) as dag:
-    ####################################################################
+    # -------------------------------------------------------------------
     # DAG tasks
-    ####################################################################
+    # -------------------------------------------------------------------
     start_task = EmptyOperator(task_id="start")
     end_task = EmptyOperator(task_id="end")
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=py_helpers.hello_world)
+    hello_world_task = PythonOperator(
+        task_id="hello_world_task", python_callable=py_helpers.hello_world
+    )
 
-####################################################################
+# -------------------------------------------------------------------
 # Define task dependencies
-####################################################################
+# -------------------------------------------------------------------
 start_task >> hello_world_task >> end_task
