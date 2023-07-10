@@ -1,0 +1,80 @@
+---
+variables:
+    ARTIFACTORY_REPO: ''
+    AIRFLOW__LOGGING__LOGGING_LEVEL: WARNING
+    AIRFLOW_ACCOUNT_NAME: test
+    AF_DAGS_FOLDER: /builds/airflow-dags/dags/
+    AF_MODULES_DIR_PATH: /builds/airflow-dags/modules/
+
+default:
+    tags:
+        - foundations
+        - docker
+    before_script:
+        - unset AWS_ACCESS_KEY_ID
+        - unset AWS_SECRET_ACCESS_KEY
+        - cat /etc/*release
+        - export ARTIFACTORY_REPO="docker-preprod"
+
+stages:
+    - unit-tests
+
+airflow_dag_attribute_validation:
+  # only:
+    # refs:
+      #TODO - during development, will only trigger this if on the feature branch
+      #Uncomment post-dev
+      # - feature/cicd
+      #- develop
+    # TODO: uncomment post-dev
+    # changes:
+    # - dags/*
+    stage: unit-tests
+    image:
+        name: docker-airflow-dags:dev
+        entrypoint: ['']
+    before_script:
+        - echo "Started job - '${CI_JOB_NAME}'. $(date +"%nDate":" %d/%m/%Y %Z%nTime":" %H:%M:%S %Z")"
+    # copy the DAGs into the required (Airflow HOME) DAGs folder
+        - cp -r ${AF_DAGS_FOLDER} ${AIRFLOW_HOME}
+    # copy the Airflow modules folder (airflow_aac_v1) to be in the same dir as ${AIRFLOW_HOME}
+        - cp -r ${AF_MODULES_DIR_PATH}/airflow_aac_v1/ ${AIRFLOW_HOME}
+    # for troubleshooting - show the contents of ${AIRFLOW_HOME}
+        - ls -l ${AIRFLOW_HOME}
+    # start an Airflow testing environment as a background process & wait to initialise for 30 secs
+        - airflow standalone &> airflow.log 2>&1 &
+        - sleep 20
+    # Create Airflow var for modules path (this is used in all DAGs)
+        - airflow variables set account_name ${AF_ACCOUNT_NAME}
+        - airflow variables set af_modules_dir ${AF_MODULES_DIR_PATH}
+    # write a list of all DAGs to a tmp file. This in turn will be used by the majority of the pytests.
+        - python3 scripts/py/generate_list_of_dags.py && cat tests/tmp/dags.txt
+    script:
+    # execute each of the pytests in the tests/ folder
+        - pytest -rA tests/ --no-header --disable-pytest-warnings --color=yes
+    after_script:
+        - echo "Finished job - '${CI_JOB_NAME}'. $(date +"%nDate":" %d/%m/%Y %Z%nTime":" %H:%M:%S %Z")"
+    allow_failure: false
+
+local_dev:
+    only:
+    # refs:
+      #TODO - during development, will only trigger this if on the feature branch
+      #Uncomment post-dev
+      # - feature/cicd
+      #- develop
+    # TODO: uncomment post-dev
+        changes:
+            - dags/*
+    stage: unit-tests
+    image:
+        name: airflow-dags:dev
+        entrypoint: ['']
+    script:
+        - echo "Started job - '${CI_JOB_NAME}'. $(date +"%nDate":" %d/%m/%Y %Z%nTime":" %H:%M:%S %Z")"
+  #script:
+    # execute each of the pytests in the tests/ folder
+    #- pytest -rA tests/ --no-header
+    after_script:
+        - echo "Finished job - '${CI_JOB_NAME}'. $(date +"%nDate":" %d/%m/%Y %Z%nTime":" %H:%M:%S %Z")"
+    allow_failure: false

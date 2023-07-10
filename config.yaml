@@ -1,0 +1,5 @@
+---
+airflow_args:
+    airflow_home_dir: ~/airflow/
+    admin_pass: ${sf_pass_dbt_demo}
+    user_demo_pass: ${user_demo}
