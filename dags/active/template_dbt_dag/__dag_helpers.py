@@ -4,7 +4,7 @@ import re
 import pendulum
 from airflow.operators.python import get_current_context
 
-local_tz = pendulum.timezone("Australia/Melbourne")
+local_tz = pendulum.timezone("Europe/Dublin")
 
 
 def hello_world():
@@ -20,7 +20,6 @@ def hello_world():
 
 
 def gen_metadata(**kwargs):
-
     print("########################################")
     context = get_current_context()
     ti = context["ti"]
@@ -48,7 +47,10 @@ def gen_metadata(**kwargs):
 
 
 def trigger(context, dag_run_obj):
-    dag_run_obj.payload = {"message": context["dag_run"].conf["message"], "day": context["dag_run"].conf["day"]}
+    dag_run_obj.payload = {
+        "message": context["dag_run"].conf["message"],
+        "day": context["dag_run"].conf["day"],
+    }
     return dag_run_obj
 
 

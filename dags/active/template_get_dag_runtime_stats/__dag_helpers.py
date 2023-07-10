@@ -12,7 +12,7 @@ logger = logging.getLogger("airflow.task")
 logger.setLevel(logging.INFO)
 
 # capture TZ info
-local_tz = pendulum.timezone("Australia/Melbourne")
+local_tz = pendulum.timezone("Europe/Dublin")
 
 
 def get_dag_run_metadata(dag_name):
