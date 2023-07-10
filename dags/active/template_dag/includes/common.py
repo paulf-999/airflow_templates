@@ -7,6 +7,8 @@ import sys
 import pendulum
 from airflow.models.dagbag import DagBag
 
+local_tz = pendulum.timezone("Europe/Dublin")
+
 
 def get_common_dag_vars(ip_calling_dag):
     """retrieve commonly used/shared variables"""
@@ -86,7 +88,5 @@ def hello_world():
 
 def get_datetime():
     """Returns the current date time using the local timezone."""
-
-    local_tz = pendulum.timezone("Europe/Dublin")
 
     return pendulum.now(local_tz).strftime("%d-%m-%Y %H:%M:%S")

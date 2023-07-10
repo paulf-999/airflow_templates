@@ -18,7 +18,7 @@ from datetime import timedelta
 import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.empty import DummyOperator
+from airflow.operators.empty import EmptyOperator
 
 
 # Set up a specific logger with our desired output level
@@ -28,6 +28,7 @@ logger.setLevel(logging.INFO)
 
 
 def hello_world(**kwargs):
+    """Example python function"""
     print("Hello world")
 
     return
@@ -59,8 +60,12 @@ local_tz = pendulum.timezone("Europe/Dublin")
 doc_md = py_helpers.try_render_readme(dag_path)
 
 # default/shared parameters used by all DAGs
-default_args = {"owner": "airflow", "depends_on_past": False, "email_on_failure": False, "email_on_retry": False}
-
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "email_on_failure": False,
+    "email_on_retry": False,
+}
 with DAG(
     "eg_jinja_generated_dag",
     description="Template Airflow DAG - standalone version",
@@ -75,15 +80,17 @@ with DAG(
     # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
     dagrun_timeout=timedelta(minutes=10),
 ) as dag:
-    ####################################################################
-    # DAG Operators
-    ####################################################################
-    start_task = DummyOperator(task_id="start")
-    end_task = DummyOperator(task_id="end")
+    # -------------------------------------------------------------------
+    # DAG tasks
+    # -------------------------------------------------------------------
+    start_task = EmptyOperator(task_id="start")
+    end_task = EmptyOperator(task_id="end")
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=py_helpers.hello_world)
+    hello_world_task = PythonOperator(
+        task_id="hello_world_task", python_callable=py_helpers.hello_world
+    )
 
-####################################################################
-# DAG Lineage
-####################################################################
+# -------------------------------------------------------------------
+# Define task dependencies
+# -------------------------------------------------------------------
 start_task >> hello_world_task >> end_task
