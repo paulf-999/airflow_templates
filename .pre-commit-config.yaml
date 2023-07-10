@@ -33,7 +33,7 @@ repos:
       # Python hooks
           - id: check-ast # checks whether files parse as valid python.
           - id: name-tests-test # verifies Python test files are named correctly - i.e., ensure py tests match .*_test\.py
-
+            args: [--pytest-test-first]
   ######################################################################################################################
   # Technology-specific linters
   ######################################################################################################################
