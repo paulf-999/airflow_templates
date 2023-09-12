@@ -2,22 +2,22 @@
 
 This repo contains:
 
-* A collection of template and example Airflow DAGs I've collated over time.
-* As well as a (local) Airflow build script (see `Makefile`).
-* Scripts to implement CICD unit tests for Airflow DAGs (see `cicd_unit_tests_for_airflow`).
+* A collection of template/example Airflow DAGs I've collated over time.
+* A local Airflow build script, using Astro CLI (see `Makefile`).
+* CICD unit tests for Airflow DAGs (see [src/cicd_unit_tests_for_airflow](src/cicd_unit_tests_for_airflow)).
 
 ---
 
 ## Contents
 
-1. Template and Example DAGs
+1. Template/Example DAGs
 2. Local Airflow Build Script
 3. CICD Unit Tests for Airflow (docs are WIP)
 4. Airflow Config `airflow.cfg`
 
 ---
 
-### 1. Template and Example DAGs
+### 1. Template/Example DAGs
 
 See the parent folder `dags` for a collection of template & example DAGs that I've collated over time.
 
@@ -26,12 +26,12 @@ See the parent folder `dags` for a collection of template & example DAGs that I'
 * See `Makefile` at the project root
 * This `Makefile` provides a simple way of creating a local install of Airflow.
 * To create a local install of Airflow you need to:
-  * Edit the input args listed in `ip/config.json`
+  * Edit the value for `ASTRO_PROJECT_NAME` on line 24 in the `Makefile`
   * Then run `make installations`
 
 ### 3. CICD Unit Tests for Airflow (docs are WIP)
 
-* See the parent folder `cicd_unit_tests_for_airflow`
+* See [src/cicd_unit_tests_for_airflow](src/cicd_unit_tests_for_airflow).
 * This folder consists of all the files required to implement and trigger Airflow unit tests as part of any GitLab CI build
 * See `cicd_unit_tests_for_airflow/.gitlab-ci` for the commands/args used to:
   * Launch an Airflow instance (in standalone mode) within a CI job

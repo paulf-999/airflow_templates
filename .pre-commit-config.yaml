@@ -5,114 +5,105 @@ default_stages: [commit]
 # some configs are only available after v2.18
 minimum_pre_commit_version: '2.18'
 repos:
-  ######################################################################################################################
-  # 'Out of the box' pre-commit hooks
-  ######################################################################################################################
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
-      hooks:
-      # General/housekeeping hooks
-          - id: check-added-large-files # prevents giant files from being committed.
-          - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
-          - id: detect-private-key # checks for the existence of private keys.
-          - id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
-          - id: fix-byte-order-marker # removes utf-8 byte order marker.
-          - id: mixed-line-ending # replaces or checks mixed line ending.
-          - id: trailing-whitespace # trims trailing whitespace.
-      # Git hooks
-          - id: no-commit-to-branch # prevents users from pushing changes to specific (protected) branches
-            args: [--branch, main, --pattern, release/.*]
-          - id: check-merge-conflict # checks for files that contain merge conflict strings.
-      # JSON hooks
-          - id: check-json # checks json files for parseable syntax.
-          - id: pretty-format-json # verifies all your JSON files are pretty. "Pretty" means keys are sorted & indented.
-            args: [--autofix]
-      # YAML hooks
-          - id: check-yaml # checks yaml files for parseable syntax.
-          - id: sort-simple-yaml # sorts simple YAML files, preserving comments and blocks.
-      # Python hooks
-          - id: check-ast # checks whether files parse as valid python.
-          - id: name-tests-test # verifies Python test files are named correctly - i.e., ensure py tests match .*_test\.py
-            args: [--pytest-test-first]
-  ######################################################################################################################
-  # Technology-specific linters
-  ######################################################################################################################
-  # SQLFluff - linter for SQL
+    # SQLFluff - linter for SQL
     - repo: https://github.com/sqlfluff/sqlfluff
       rev: 2.0.2
       hooks:
-          - id: sqlfluff-lint # lints sql files with `SQLFluff`
+          - id: sqlfluff-lint # lints SQL files with `SQLFluff`
             args: [--dialect, snowflake, --disregard-sqlfluffignores]
-            # in dbt v1.4 there is a breaking change that causes the package 'sqlfluff-templater-dbt' to fail
-            additional_dependencies: [dbt-core==1.3, dbt-snowflake==1.3, sqlfluff-templater-dbt==2.0.2]
-
-  # - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-  #   rev: 1.0.1  # used to ensure that our dbt standards are upheld
-  #   hooks:
-  #     - id: dbt-docs-generate
-  #       args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
-  #     - id: check-source-has-tests-by-name
-  #       args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=1", "--"]
-  #     - id: check-source-table-has-description
-
-  ######################################################################################################################
-  # YAML hooks
-  ######################################################################################################################
-  # yamlfmt - fix input yaml files
-    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
-      rev: 0.2.1
+            # in dbt v1.5 there is a breaking change that causes the package 'sqlfluff-templater-dbt' to fail
+            additional_dependencies: [dbt-core==1.4, dbt-snowflake==1.4, sqlfluff-templater-dbt==2.0.2]
+            name: SQL check - linter (using SQLFluff)
+    # Git hooks
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
       hooks:
-          - id: yamlfmt
-
-  # YAMLLint - linter for YAML
+          - id: no-commit-to-branch # prevents users from pushing changes to specific (protected) branches
+            args: [--branch, develop, --branch, main, --pattern, release/.*]
+            name: Git checks - committed to protected Git branch?
+          - id: check-merge-conflict # checks for files that contain merge conflict strings.
+            name: Git checks - any merge conflicts?
+    - repo: local
+      hooks:
+          - id: git_branch_name_validation # Custom Git branch validation hook
+            name: Git checks - Git branch name validation
+            description: This hook validates the Git branch name.
+            entry: src/sh/pre_commit_hooks/git_validate_branch_name.sh
+            language: script
+            pass_filenames: false
+    # Shell script validation hook - ensures shell scripts conform to shellcheck
+    - repo: https://github.com/jumanjihouse/pre-commit-hooks
+      rev: 3.0.0
+      hooks:
+          - id: shellcheck # Ensure shell scripts conform to shellcheck
+            name: Shell script checks - linter (using shellcheck)
+    # YAML hooks
     - repo: https://github.com/adrienverge/yamllint.git
       rev: v1.30.0
       hooks:
           - id: yamllint # Lint YAML files using rules specified in .yamllint
             args: [-c=.yamllint]
-
-  ######################################################################################################################
-  # Additional Python hooks
-  ######################################################################################################################
+            name: YAML checks - linter (using yamllint)
+    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+      rev: 0.2.1
+      hooks:
+          - id: yamlfmt # yamlfmt - fix input yaml files
+            name: YAML fixes
+    # Python - fixes
     - repo: https://github.com/psf/black
       rev: 23.1.0
       hooks:
           - id: black
-            exclude: snowflake_client.py
             args: [--line-length=120]
-
+            name: Python fixes - format Python code using the Black formatter
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v3.3.1
+      hooks:
+          - id: pyupgrade # automatically upgrade Python syntax to instead use the syntax used in Python 3.6 and above.
+            args: [--py36-plus]
+            name: Python fixes - upgrade Python syntax to instead use the syntax used in Python 3.6 and above.
+    - repo: https://github.com/asottile/reorder_python_imports
+      rev: v3.9.0
+      hooks:
+          - id: reorder-python-imports # Reorders import statements in python files.
+            name: Python fixes - reorder import statements in python files.
+    # Python - checks
     - repo: https://github.com/PyCQA/flake8
       rev: 6.0.0
       hooks:
           - id: flake8 # enforces flake8 style consistency across Python files.
             language_version: python3
             args: [--max-line-length=150, --max-complexity=10]
-
-    - repo: https://github.com/asottile/reorder_python_imports
-      rev: v3.9.0
+            name: Python checks - linter (using flake8)
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
       hooks:
-          - id: reorder-python-imports # Reorders import statements in python files.
-
-    - repo: https://github.com/asottile/pyupgrade
-      rev: v3.3.1
-      hooks:
-          - id: pyupgrade # automatically upgrade Python syntax to instead use the syntax used in Python 3.6 and above.
-            args: [--py36-plus]
-
+          - id: check-ast # checks whether files parse as valid python.
+            name: Python checks - valid syntax?
+          - id: name-tests-test # verifies Python test files are named correctly - i.e., ensure py tests match /test*.py
+            args: [--pytest-test-first]
+            name: Python checks - pytest tests - named correctly? (I.e., 'test_')
     - repo: https://github.com/econchick/interrogate
       rev: 1.5.0
       hooks:
           - id: interrogate # checks your code base for missing docstrings.
             args: [--quiet, --fail-under=90]
-
-  ######################################################################################################################
-  # My custom Git branch validation hook
-  ######################################################################################################################
-    - repo: local
+            name: Python checks - docstrings missing?
+    # General/housekeeping hooks
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
       hooks:
-          - id: git_branch_name_validation
-            name: Git branch name validation
-            description: This hook validates the Git branch name.
-            entry: src/sh/validate_git_branch_name.sh
-            language: script
-            pass_filenames: false
+          - id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
+            name: General fixes - fix end of files
+          - id: trailing-whitespace # trims trailing whitespace.
+            name: General fixes - trim trailing whitespace
+          - id: fix-byte-order-marker # removes utf-8 byte order marker.
+            name: General fixes - fix utf-9 byte order marker
+          - id: mixed-line-ending # replaces or checks mixed line ending.
+            name: General fixes - fix mixed line endings
+          - id: check-added-large-files # prevents giant files from being committed.
+            name: General checks - any large files added?
+          - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
+            name: General checks - any string case conflicts?
+          - id: detect-private-key # checks for the existence of private keys.
+            name: General checks - private key added?
