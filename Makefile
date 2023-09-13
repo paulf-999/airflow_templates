@@ -22,12 +22,13 @@ CYAN := \033[0;36m
 COLOUR_OFF := \033[0m # Text Reset
 
 ASTRO_PROJECT_NAME := eg_astro_project
-
 #=======================================================================
 
-.PHONY = installations deps install clean
-
-installations: deps install clean
+#=======================================================================
+# Targets
+#=======================================================================
+all: deps install clean
+.PHONY: all
 
 deps:
     @echo "----------------------------------------------------------------------------------------------------------------------"
@@ -35,6 +36,7 @@ deps:
     @echo "----------------------------------------------------------------------------------------------------------------------"
     @echo && echo "Download astro cli" && echo
     @curl -sSL install.astronomer.io | sudo bash -s > /dev/null 2>&1
+.PHONY: deps
 
 install:
     @echo "------------------------------------------------------------------"
@@ -44,9 +46,23 @@ install:
     @mkdir ${ASTRO_PROJECT_NAME} && cd ${ASTRO_PROJECT_NAME} && astro dev init > /dev/null 2>&1
     @echo "Step 2: Run Airflow locally" && echo
     @cd ${ASTRO_PROJECT_NAME} && astro dev start
+.PHONY: install
+
+test:
+    @echo "------------------------------------------------------------------"
+    @echo "${YELLOW}Target 'test'. Perform any required tests.${COLOUR_OFF}"
+    @echo "------------------------------------------------------------------"
+.PHONY: test
 
 clean:
     @echo "------------------------------------------------------------------"
     @echo "${YELLOW}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_OFF}"
     @echo "------------------------------------------------------------------"
     @rm -rf ${ASTRO_PROJECT_NAME}
+.PHONY: clean
+
+# Phony targets
+.PHONY = installations deps install clean
+
+# .PHONY tells Make that these targets don't represent files
+# This prevents conflicts with any files named "all" or "clean"

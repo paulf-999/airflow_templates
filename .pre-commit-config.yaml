@@ -37,6 +37,12 @@ repos:
       hooks:
           - id: shellcheck # Ensure shell scripts conform to shellcheck
             name: Shell script checks - linter (using shellcheck)
+    # Makefile linter
+    - repo: https://github.com/mrtazz/checkmake.git
+      rev: 0.2.2
+      hooks:
+          - id: checkmake
+            name: Makefile check - linter
     # YAML hooks
     - repo: https://github.com/adrienverge/yamllint.git
       rev: v1.30.0
