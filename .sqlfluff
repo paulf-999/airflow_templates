@@ -1,47 +1,66 @@
+# For a full reference of the SQLFluff rules, see https://docs.sqlfluff.com/en/stable/rules.html
 [sqlfluff]
 dialect = snowflake
-# templater = dbt
-templater = jinja
+templater = dbt # The dbt templater is slower than the jinja templater, as it first compiles the dbt code into data warehouse code. If you don't need to use the dbt templater, uncomment the line below
+# templater = jinja
+#-----------------------------------------------------------------------------------
+runaway_limit = 10 # Number of passes to run before admitting defeat
+max_line_length = 120
 sql_file_exts = .sql,.sql.j2,.dml,.ddl
-# allow aliasing in from clauses and join conditions.
-exclude_rules = L031
+large_file_skip_byte_limit = 30000 # Very large files can make the parser effectively hang
 
+#-----------------------------------------------------------------------------------
+# General Formatting Rules
+#-----------------------------------------------------------------------------------
 [sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
 indented_joins = true
 indented_using_on = true
 template_blocks_indent = true
 
+# Comma rules
 [sqlfluff:layout:type:comma]
 line_position = leading
+[sqlfluff:rules:convention.select_trailing_comma]  # trailing commas within select clauses
+select_clause_trailing_comma = forbid
 
+# Capitalisation rules
+[sqlfluff:rules:capitalisation.keywords]  # Inconsistent capitalisation of keywords.
+capitalisation_policy = upper
+[sqlfluff:rules:capitalisation.identifiers] # Unquoted identifiers.
+extended_capitalisation_policy = upper
+ignore_words = None
+[sqlfluff:rules:capitalisation.functions]  # Inconsistent capitalisation of function names.
+extended_capitalisation_policy = upper
+[sqlfluff:rules:capitalisation.literals]  # Inconsistent capitalisation of null & boolean literals.
+capitalisation_policy = upper
+[sqlfluff:rules:capitalisation.types] # Inconsistent capitalisation of data types.
+extended_capitalisation_policy = upper
+
+# Other
+[sqlfluff:rules:ambiguous.column_references]  # Use column names in group by statements.
+group_by_and_order_by_style = explicit
+[sqlfluff:rules:aliasing.length] # The minimum length of an alias to allow without raising a violation.
+min_alias_length = 3
+# Some rules can be configured from the config common to other rules
+[sqlfluff:rules]
+allow_scalar = true
+single_table_references = unqualified # table references aren't necessary in statements with a single table.
+unquoted_identifiers_policy = all
+
+#-----------------------------------------------------------------------------------
+# Templater rules
+#-----------------------------------------------------------------------------------
 [sqlfluff:templater]
 unwrap_wrapped_queries = true
 
-[sqlfluff:templater:dbt]
-# pass in the dbt project/cred details
+[sqlfluff:templater:dbt] # pass in our dbt project/cred details
 project_dir =
 profiles_dir =
 profile =
 
+[sqlfluff:templater:dbt:context] # Default values for custom DBT macro context
+
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = true
-
-# Some rules can be configured directly from the config common to other rules
-[sqlfluff:rules]
-tab_space_size = 4
-max_line_length = 120
-indent_unit = space
-allow_scalar = true
-single_table_references = consistent
-unquoted_identifiers_policy = all
-
-[sqlfluff:rules:L010] # Inconsistent capitalisation of keywords.
-capitalisation_policy = upper
-[sqlfluff:rules:L028] # References should be consistent in statements with a single table.
-single_table_references = unqualified
-[sqlfluff:rules:L030] # Inconsistent capitalisation of function names.
-capitalisation_policy = upper
-[sqlfluff:rules:L038] # trailing commas within select clauses
-select_clause_trailing_comma = forbid
-[sqlfluff:rules:L040] # Inconsistent capitalisation of boolean/null literal.
-capitalisation_policy = upper
