@@ -5,15 +5,6 @@ default_stages: [commit]
 # some configs are only available after v2.18
 minimum_pre_commit_version: '2.18'
 repos:
-    # SQLFluff - linter for SQL
-    - repo: https://github.com/sqlfluff/sqlfluff
-      rev: 2.0.2
-      hooks:
-          - id: sqlfluff-lint # lints SQL files with `SQLFluff`
-            args: [--dialect, snowflake, --disregard-sqlfluffignores]
-            # in dbt v1.5 there is a breaking change that causes the package 'sqlfluff-templater-dbt' to fail
-            additional_dependencies: [dbt-core==1.4, dbt-snowflake==1.4, sqlfluff-templater-dbt==2.0.2]
-            name: SQL check - linter (using SQLFluff)
     # Git hooks
     - repo: https://github.com/pre-commit/pre-commit-hooks
       rev: v4.4.0
@@ -31,6 +22,15 @@ repos:
             entry: src/sh/pre_commit_hooks/git_validate_branch_name.sh
             language: script
             pass_filenames: false
+    # SQLFluff - linter for SQL
+    - repo: https://github.com/sqlfluff/sqlfluff
+      rev: 2.0.2
+      hooks:
+          - id: sqlfluff-lint # lints SQL files with `SQLFluff`
+            args: [--dialect, snowflake, --disregard-sqlfluffignores]
+            # in dbt v1.5 there is a breaking change that causes the package 'sqlfluff-templater-dbt' to fail
+            additional_dependencies: [dbt-core==1.4, dbt-snowflake==1.4, sqlfluff-templater-dbt==2.0.2]
+            name: SQL check - linter (using SQLFluff)
     # Shell script validation hook - ensures shell scripts conform to shellcheck
     - repo: https://github.com/jumanjihouse/pre-commit-hooks
       rev: 3.0.0
