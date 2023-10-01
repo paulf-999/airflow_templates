@@ -2,7 +2,7 @@ all: deps install [X, Y, Z...] clean
 
 .EXPORT_ALL_VARIABLES:
 
-.PHONY = installations deps install get_ips build_docker_img deploy_image_to_artifactory run_docker_container_locally
+.PHONY: installations deps install get_ips build_docker_img deploy_image_to_artifactory run_docker_container_locally
 
 CONFIG_FILE := config.json
 
