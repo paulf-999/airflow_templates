@@ -1,0 +1,30 @@
+SHELL = /bin/sh
+
+#=======================================================================
+# Variables
+#=======================================================================
+.EXPORT_ALL_VARIABLES:
+
+# load variables from .env file
+include .env
+
+# load variables from separate file
+include terminal_colour_formatting.mk
+
+stop:
+	@echo "${INFO}Target 'test'.${COLOUR_OFF}"
+	astro dev stop
+
+bash:
+	@echo "${INFO}Target 'bash'.${COLOUR_OFF}"
+	astro dev bash
+
+restart:
+	@echo "${INFO}Target 'restart'.${COLOUR_OFF}"
+	astro dev restart #--wait
+	# source soda_venv/bin/activate
+
+# Phony targets
+.PHONY: stop bash restart
+# .PHONY tells Make that these targets don't represent files
+# This prevents conflicts with any files named "all" or "clean"

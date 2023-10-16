@@ -1,0 +1,32 @@
+# This file allows you to configure Airflow Connections, Pools, and Variables in a single place for local development only.
+# NOTE: json dicts can be added to the conn_extra field as yaml key value pairs. See the example below.
+
+# For more information, refer to our docs: https://docs.astronomer.io/develop-project#configure-airflow_settingsyaml-local-development-only
+# For questions, reach out to: https://support.astronomer.io
+# For issues create an issue ticket here: https://github.com/astronomer/astro-cli/issues
+
+airflow:
+  connections:
+    - conn_id: {{ SNOWFLAKE_CONNECTION_NAME }}
+      conn_type: snowflake
+      conn_host:
+      conn_schema:
+      conn_login: {{ SNOWFLAKE_USER }}
+      conn_password: {{ SNOWFLAKE_PASSWORD }}
+      conn_port:
+      conn_schema: {{ SNOWFLAKE_SCHEMA }}
+      conn_extra:
+        account: {{ SNOWFLAKE_ACCOUNT }}
+        warehouse: {{ SNOWFLAKE_WAREHOUSE }}
+        database: {{ SNOWFLAKE_DATABASE }}
+        region: {{ SNOWFLAKE_REGION }}
+        role: {{ SNOWFLAKE_ROLE }}
+        insecure_mode: false
+
+  pools:
+    - pool_name:
+      pool_slot:
+      pool_description:
+  variables:
+    - variable_name:
+      variable_value:
