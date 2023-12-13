@@ -23,41 +23,30 @@ SNOWFLAKE_CONNECTION_NAME := dm_snowflake_conn
 all: deps install clean
 
 deps:
-	@echo && echo "${INFO}Called makefile target 'deps'. Download any required libraries.${COLOUR_OFF}" && echo
-	@echo && echo "Step 1: Download Astro CLI" && echo
+	@echo "${INFO}\nCalled makefile target 'deps'. Download any required libraries.${COLOUR_OFF}\n"
+	@echo "${DEBUG}1. Download Astro CLI (note: you'll be asked for your unix password if you haven't recently provided it)${COLOUR_OFF}"
 	@curl -sSL install.astronomer.io | sudo bash -s > /dev/null 2>&1
-	@echo && echo "Step 2: Generate .env file" && echo
-	@j2 src/templates/jinja_templates/.env_template.j2 -o .env
+	@make -s gen_env_template
 
 install:
-	@echo && echo "${INFO}Called makefile target 'install'. Run the setup & install targs.${COLOUR_OFF}" && echo
-	@echo && echo "Step 1: Create an Astro project" && echo
-	@mkdir ${ASTRO_PROJECT_NAME} && cd ${ASTRO_PROJECT_NAME} && astro dev init > /dev/null 2>&1 && touch tests/.gitkeep
-	@echo "Step 2: Generate template airflow_settings.yaml file"
-	@j2 src/templates/jinja_templates/airflow_settings.yaml.j2 -o ${ASTRO_PROJECT_NAME}/airflow_settings.yaml
-	@echo && echo "Step 3: Generate template Dockerfile" && echo
-	@j2 src/templates/jinja_templates/Dockerfile.j2 -o ${ASTRO_PROJECT_NAME}/Dockerfile
-	@echo "Step 4: Copy the generated .env file to the astro project dir" && echo
-	@cp .env ${ASTRO_PROJECT_NAME}/.env
-	@echo "Step 5: Copy over the template DAGs to the generated astro project dir" && echo
-	@cp -r src/templates/template_dags/* ${ASTRO_PROJECT_NAME}/dags/
-	@echo "Step 6: Copy the template soda config to the astro project dir" && echo
-	@cp -r src/templates/soda/ ${ASTRO_PROJECT_NAME}/include/
-	@echo "Step 7: Remove the example dags" && echo
-	@rm ${ASTRO_PROJECT_NAME}/dags/example_dag_basic.py && rm ${ASTRO_PROJECT_NAME}/dags/example_dag_advanced.py
-	@echo "Step 8: Generate the template Makefile" && echo
-	@j2 src/templates/jinja_templates/Makefile.j2 -o ${ASTRO_PROJECT_NAME}/Makefile && cp config.mk ${ASTRO_PROJECT_NAME}
+	@echo "${INFO}\nCalled makefile target 'install'. Run the setup & install targets.\n${COLOUR_OFF}"
+	@make -s create_astro_project
+	@make -s generate_airflow_project_files
+	@make -s copy_generated_airflow_files
 
 run:
-	@echo && echo "${INFO}Called makefile target 'run'. Launch the service.${COLOUR_OFF}" && echo
-	@echo "Run Airflow locally" && echo
+	@echo "${INFO}\nCalled makefile target 'run'. Launch local Airflow instance using Astronomer.${COLOUR_OFF}\n"
+	@make -s check_docker
+	@echo "${DEBUG}Launch Airflow locally using Astronomer\n${COLOUR_OFF}"
+	@# Start Astro. Note: an additional 5 minute allowance is added, to cater for the additional libs to be installed
 	@cd ${ASTRO_PROJECT_NAME} && astro dev start --wait 5m
 
 test:
-	@echo && echo "${INFO}Called makefile target 'test'. Perform any required tests.${COLOUR_OFF}" && echo
+	@echo "${INFO}\nCalled makefile target 'test'. Perform any required tests.${COLOUR_OFF}\n"
 
 clean:
-	@echo && echo "${INFO}Called makefile target 'clean'. Restoring the repository to its initial state.${COLOUR_OFF}" && echo
+	@echo "${INFO}\nCalled makefile target 'clean'. Restoring the repository to its initial state.${COLOUR_OFF}\n"
+	@rm -rf .env
 
 # Phony targets
 .PHONY: all deps install test clean
