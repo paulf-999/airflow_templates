@@ -1,0 +1,29 @@
+#=======================================================================
+# Variables
+#=======================================================================
+.EXPORT_ALL_VARIABLES:
+
+# load variables from separate file
+include config.mk
+
+stop:
+	@echo "------------------------------------------------------------------"
+	@echo "${YELLOW}Target 'test'.${COLOUR_OFF}"
+	@echo "------------------------------------------------------------------"
+	astro dev stop
+.PHONY: stop
+
+bash:
+	@echo "------------------------------------------------------------------"
+	@echo "${YELLOW}Target 'bash'.${COLOUR_OFF}"
+	@echo "------------------------------------------------------------------"
+	astro dev bash
+.PHONY: bash
+
+restart:
+	@echo "------------------------------------------------------------------"
+	@echo "${YELLOW}Target 'restart'.${COLOUR_OFF}"
+	@echo "------------------------------------------------------------------"
+	astro dev restart #--wait
+	# source soda_venv/bin/activate
+.PHONY: restart

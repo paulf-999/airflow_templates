@@ -1,0 +1,12 @@
+FROM quay.io/astronomer/astro-runtime:9.1.0
+
+# Install the Snowflake provider for Apache Airflow
+RUN pip install apache-airflow-providers-snowflake
+# RUN pip install airflow.providers.dbt
+# RUN pip install paramiko
+# Install the Snowflake Python driver
+# RUN pip install snowflake-connector-python
+
+RUN python -m venv soda_venv && source soda_venv/bin/activate && \
+    pip install --no-cache-dir soda-core-snowflake==3.0.47 &&\
+    pip install --no-cache-dir soda-core-scientific==3.0.47 && deactivate
