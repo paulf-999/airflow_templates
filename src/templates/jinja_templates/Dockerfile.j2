@@ -1,0 +1,8 @@
+FROM quay.io/astronomer/astro-runtime:9.1.0
+
+# Install the Snowflake provider for Apache Airflow
+RUN pip install apache-airflow-providers-snowflake
+# RUN pip install airflow.providers.dbt
+# RUN pip install paramiko
+# Install the Snowflake Python driver
+# RUN pip install snowflake-connector-python

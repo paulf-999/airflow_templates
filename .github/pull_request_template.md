@@ -1,21 +1,22 @@
-# Merge Request
+# :pencil2: Pull Request Summary
 
-## :pencil2: Summary
-
-[Summary of the change here]
-
----
+[Summary of the change here.]
 
 ## :hammer_and_wrench: Type of Change
 
-Please tick the appropriate option:
+Choose one:
 
-- [ ] New feature (non-breaking change which adds functionality).
-- [ ] Bug fix (non-breaking change which fixes an issue).
-- [ ] Housekeeping - i.e., tidying up code/content within the git repo.
+- [ ] **New Feature**: A new enhancement/feature.
+- [ ] **Trivial New Feature**: A *trivial* new feature.
+- [ ] **Bugfix**: A *minor* bug or issue.
+- [ ] **Documentation**: Updates or adds documentation.
+- [ ] **Housekeeping**: Tidying up code/content within the git repo.
 
----
+## :fire: Critical Changes
 
-## (Optional) Description & Motivation
+- [ ] **Hotfix**: Addresses a critical bug fix.
+- [ ] **Release**: A major new code release.
 
-[Additional details about the proposed change]
+## :clipboard: Additional Details (Optional)
+
+[If needed, provide further context or details.]
