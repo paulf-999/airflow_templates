@@ -3,71 +3,54 @@ SHELL = /bin/sh
 #================================================================
 # Usage
 #================================================================
-# make installations    # install the package for the first time, managing dependencies & performing a housekeeping cleanup too
-# make deps     # just install the dependencies
-# make install      # perform the end-to-end install
-# make clean        # perform a housekeeping cleanup
+# make deps		# just install the dependencies
+# make install		# perform the end-to-end install
+# make clean		# perform a housekeeping cleanup
 
 #=======================================================================
 # Variables
 #=======================================================================
 .EXPORT_ALL_VARIABLES:
 
-# load variables from .env file
-include .env
+include src/make/variables.mk # load variables from a separate makefile file
+include src/make/setup.mk # store setup targets in a separate makefile
 
-# load terminal colour formatting vars from separate file
-include src/make/terminal_colour_formatting.mk
-
-ASTRO_PROJECT_NAME := eg_astro_project
+ASTRO_PROJECT_NAME := dq_pipelines
 SNOWFLAKE_CONNECTION_NAME := dm_snowflake_conn
-#=======================================================================
-
 #=======================================================================
 # Targets
 #=======================================================================
-all: clean deps install
+all: deps install clean
 
 deps:
-	@echo && echo "${INFO}Called makefile target 'deps'. Create virtualenv with required Python libs.${COLOUR_OFF}" && echo
-	@echo "Download Astro CLI"
+	@echo "${INFO}\nCalled makefile target 'deps'. Download any required libraries.${COLOUR_OFF}\n"
+	@echo "${DEBUG}1. Download Astro CLI (note: you'll be asked for your unix password if you haven't recently provided it)${COLOUR_OFF}"
 	@curl -sSL install.astronomer.io | sudo bash -s > /dev/null 2>&1
-	@pip install -r requirements.txt -q && echo
+	@echo "${DEBUG}2. Generate template .env file${COLOUR_OFF}"
+	@j2 ${JINJA_TEMPLATES_DIR}/.env_template.j2 -o .env && echo
 
-install: validate_env_vars
-	@echo && echo "${INFO}Called makefile target 'install'. Set up local Airflow build.${COLOUR_OFF}" && echo
-	@echo "Step 1: Create an Astro project" && echo
-	@mkdir ${ASTRO_PROJECT_NAME} && cd ${ASTRO_PROJECT_NAME} && astro dev init > /dev/null 2>&1
-	@echo "Step 2: Generate template airflow_settings.yaml file"
-	@j2 src/templates/jinja_templates/airflow_settings.yaml.j2 -o ${ASTRO_PROJECT_NAME}/airflow_settings.yaml
-	@echo && echo "Step 3: Generate template Dockerfile" && echo
-	@j2 src/templates/jinja_templates/Dockerfile.j2 -o ${ASTRO_PROJECT_NAME}/Dockerfile
-	@echo "Step 4: Copy the generated .env file to the astro project dir" && echo
-	@cp .env ${ASTRO_PROJECT_NAME}/.env
-	@echo "Step 5: Copy over the template DAGs to the generated astro project dir" && echo
-	@cp -r src/templates/template_dags/* ${ASTRO_PROJECT_NAME}/dags/
-	@echo "Step 6: Remove the example dags" && echo
-	@rm ${ASTRO_PROJECT_NAME}/dags/example_dag_basic.py && rm ${ASTRO_PROJECT_NAME}/dags/example_dag_advanced.py
-	@echo "Step 7: Generate the template Makefile" && echo
-	@j2 src/templates/jinja_templates/Makefile.j2 -o ${ASTRO_PROJECT_NAME}/Makefile && cp src/make/terminal_colour_formatting.mk ${ASTRO_PROJECT_NAME}
+install:
+	@echo "${INFO}\nCalled makefile target 'install'. Run the setup & install targets.\n${COLOUR_OFF}"
+	@make -s create_astro_project
+	@make -s copy_generated_airflow_files
+	@make -s generate_airflow_project_files
 
 run:
-	@echo && echo "${INFO}Called makefile target 'run'. Launch the service.${COLOUR_OFF}" && echo
-	@echo "Run Airflow locally" && echo
-	@cd ${ASTRO_PROJECT_NAME} && astro dev start
+	@echo "${INFO}\nCalled makefile target 'run'. Launch local Airflow instance using Astronomer.${COLOUR_OFF}\n"
+	@make -s check_docker
+	@echo "${DEBUG}Launch Airflow locally using Astronomer\n${COLOUR_OFF}"
+	@# Start Astro. Note: an additional 5 minute allowance is added, to cater for the additional libs to be installed
+	@cd ${ASTRO_PROJECT_NAME} && astro dev start --wait 5m
 
 test:
-	@echo && echo "${INFO}Called makefile target 'install'. Perform any required tests.${COLOUR_OFF}" && echo
-
-validate_env_vars:
-	@echo && echo "${INFO}Called makefile target 'validate_env_vars'. Verify the contents of required env vars.${COLOUR_OFF}" && echo
-	@./src/sh/validate_env_vars.sh config.yaml .env
+	@echo "${INFO}\nCalled makefile target 'test'. Perform any required tests.${COLOUR_OFF}\n"
 
 clean:
-	@echo && echo "${INFO}Called makefile target 'clean'. Restoring the repository to its initial state.${COLOUR_OFF}" && echo
-	@rm -rf ${ASTRO_PROJECT_NAME}
+	@echo "${INFO}\nCalled makefile target 'clean'. Restoring the repository to its initial state.${COLOUR_OFF}\n"
+	@rm -rf .env
 
 # Phony targets
 .PHONY: all deps install test clean
+
 # .PHONY tells Make that these targets don't represent files
 # This prevents conflicts with any files named "all" or "clean"
