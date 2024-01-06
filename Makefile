@@ -35,7 +35,7 @@ deps:
 	@pip install -r requirements.txt -q && echo
 
 install: validate_env_vars
-	@echo && echo "${INFO}Called makefile target 'install'. Set up GX (Great Expectations) project.${COLOUR_OFF}" && echo
+	@echo && echo "${INFO}Called makefile target 'install'. Set up local Airflow build.${COLOUR_OFF}" && echo
 	@echo "Step 1: Create an Astro project" && echo
 	@mkdir ${ASTRO_PROJECT_NAME} && cd ${ASTRO_PROJECT_NAME} && astro dev init > /dev/null 2>&1
 	@echo "Step 2: Generate template airflow_settings.yaml file"
