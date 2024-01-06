@@ -9,3 +9,7 @@ WARNING := \033[0;33m # yellow (for warning messages)
 ERROR := \033[0;31m # red (for error messages)
 CRITICAL := \033[1;31m # bold red (for critical errors)
 COLOUR_OFF := \033[0m # reset text color
+
+TEMPLATES_DIR := src/templates
+JINJA_TEMPLATES_DIR := ${TEMPLATES_DIR}/jinja_templates
+AIRFLOW_DAGS_DIR := ${ASTRO_PROJECT_NAME}/dags

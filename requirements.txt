@@ -4,3 +4,4 @@ pytest==7.2.1
 python-dotenv==1.0.0
 snowflake-connector-python==3.0.4
 colorlog
+humanfriendly

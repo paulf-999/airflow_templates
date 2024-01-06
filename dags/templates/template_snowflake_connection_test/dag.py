@@ -15,8 +15,8 @@ import logging
 import importlib
 import pendulum
 from airflow import DAG
-from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
+from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
 
 # Set up a specific logger with our desired output level
 logging.basicConfig(format="%(message)s")
@@ -44,16 +44,18 @@ default_args = {
 
 doc_md = helpers.try_render_readme(dag_path)
 
-with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=["template"]) as dag:
+conn_id = "dm_snowflake_conn"
+
+with DAG(dag_id=dag_name, doc_md=doc_md, default_args=default_args, schedule_interval=None, tags=[]) as dag:
     ####################################################################
     # DAG Operators
     ####################################################################
     start_task = EmptyOperator(task_id="start")
     end_task = EmptyOperator(task_id="end")
 
-    hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=helpers.hello_world)
+    sf_query_eg1 = SnowflakeOperator(task_id="sf_query_eg1", sql=queries.example_query, snowflake_conn_id=conn_id)
 
 ####################################################################
 # DAG Lineage
 ####################################################################
-start_task >> hello_world_task >> end_task
+start_task >> sf_query_eg1 >> end_task

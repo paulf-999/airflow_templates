@@ -18,7 +18,7 @@ from datetime import timedelta
 import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.empty import DummyOperator
+from airflow.operators.dummy import DummyOperator
 
 
 # Set up a specific logger with our desired output level
@@ -75,17 +75,16 @@ with DAG(
     start_date=pendulum.now(local_tz),
     schedule_interval=None,
     catchup=False,  # best practice - set this to `False` to have full control of your DAG and avoid accidental `backfilling`.
-    tags=['example_tag1', 'tag2'],
+    tags=["example_tag1", "tag2"],
     # best practice is to provide a value for `dagrun_timeout` as by default a value isn't provided.
     # `dagrun_timeout` is used to control the amount of time to allow for your DAG to run before failing.
     dagrun_timeout=timedelta(minutes=10),
 ) as dag:
-
     # -------------------------------------------------------------------
     # DAG tasks
     # -------------------------------------------------------------------
-    start_task = EmptyOperator(task_id="start")
-    end_task = EmptyOperator(task_id="end")
+    start_task = DummyOperator(task_id="start")
+    end_task = DummyOperator(task_id="end")
 
     hello_world_task = PythonOperator(task_id="hello_world_task", python_callable=py_helpers.hello_world)
 

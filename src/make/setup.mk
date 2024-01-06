@@ -3,9 +3,6 @@ SHELL = /bin/sh
 include .env # load environment variables from .env file
 include src/make/variables.mk # load variables from a separate file
 
-TEMPLATES_DIR := src/templates
-JINJA_TEMPLATES_DIR := ${TEMPLATES_DIR}/jinja_templates
-AIRFLOW_DAGS_DIR := ${ASTRO_PROJECT_NAME}/dags
 #=======================================================================
 # Targets
 #=======================================================================
@@ -36,14 +33,14 @@ copy_generated_airflow_files:
 	@# Copy the generated .env file to the astro project dir
 	@cp .env ${ASTRO_PROJECT_NAME}/.env
 	@# Copy over the template DAGs to the generated astro project dir
-	@cp -r ${TEMPLATES_DIR}/template_dags/* ${AIRFLOW_DAGS_DIR}/
+	@cp -r dags/templates/ ${AIRFLOW_DAGS_DIR}/
 	@# Copy the template soda config to the astro project dir
 	@cp -r ${TEMPLATES_DIR}/soda/ ${ASTRO_PROJECT_NAME}/include/
 	@# Remove the example dags
 	@rm ${AIRFLOW_DAGS_DIR}/example_dag_basic.py && rm ${AIRFLOW_DAGS_DIR}/example_dag_advanced.py && echo
 
 generate_airflow_project_files:
-	@echo "${DEBUG}3. Generate Airflow files.${COLOUR_OFF} && echo"
+	@echo "${DEBUG}3. Generate Airflow files.${COLOUR_OFF}" && echo
 	@# Generate template airflow_settings.yaml file
 	@j2 ${JINJA_TEMPLATES_DIR}/airflow_settings.yaml.j2 -o ${ASTRO_PROJECT_NAME}/airflow_settings.yaml
 	@# Generate template Dockerfile
