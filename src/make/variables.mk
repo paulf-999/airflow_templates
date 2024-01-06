@@ -1,3 +1,7 @@
+#=======================================================================
+# Variables
+#=======================================================================
+
 # ANSI escape codes for color formatting
 DEBUG := \033[0;36m # cyan (for debug messages)
 INFO := \033[0;32m # green (for informational messages)
